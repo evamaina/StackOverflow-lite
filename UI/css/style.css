@@ -1,0 +1,108 @@
+
+body{
+   font-family: Arial,Sans-Serif, Helvetica;
+   background-color: #0000FF;
+}
+
+header{
+    padding: 20px 15px;
+    overflow: hidden;
+}
+
+.header a {
+    float: left;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    padding: 10px;
+    line-height: 20px;
+    font-weight: bold;
+}
+
+.header a.brand {
+    font-size: 25px;
+    font-weight: bold;
+
+
+}
+
+.header-right {
+    float: right;
+   
+}
+
+.header a:hover {
+    background-color: orange;
+    color: black;
+}
+
+/* using a fixed footer */
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: orange;
+    color: white;
+    text-align: center;
+}
+
+.main-column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+    margin-top: 100px;
+}
+
+/* Style the active/current link*/
+.header a.active {
+    background-color: orange;
+    color: white;
+}
+
+
+/* style signup and login forms */
+.wrap{
+    width: 350px;
+    margin: auto;
+    background: #0000FF;
+    margin-top: 10px;
+    padding: 10px;
+}
+form{
+    padding: 10px;
+    font-family: arial;
+    border: 1px dotted white;
+    margin-top: 40px;
+}
+h2{
+    text-align: center;
+    background: orange;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+}
+input{
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    border: none;
+}
+input[type="text"], input[type="email"],input[type="password"]{
+    width: 90%;
+}
+input[type="submit"]{
+    width: 95%;
+    background: orange;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+input[type="submit"]:hover{
+    background: yellow;
+
+}
+
+
