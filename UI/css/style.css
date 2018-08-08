@@ -72,18 +72,6 @@ header{
 }
 
 
-/* Clear floats after the main-columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: all;
-}
-
-
-.centered {
-    text-align: left;
-}
-
 /* Style the active/current link*/
 .header a.active {
     background-color: orange;
