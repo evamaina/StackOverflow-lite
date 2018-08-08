@@ -1,7 +1,7 @@
 
 body{
    font-family: Arial,Sans-Serif, Helvetica;
-   background-color: #0000FF;
+   background-color: #4C4CFF;
 }
 
 header{
@@ -17,8 +17,6 @@ header{
     font-size: 15px;
     padding: 10px;
     line-height: 20px;
-
-
     font-weight: bold;
 
 }
@@ -34,14 +32,6 @@ header{
 
 }
 
-.header a:hover {
-    background-color: #FF0000;
-    color: black;
-}
-
-
-   
-}
 
 .header a:hover {
     background-color: orange;
@@ -55,11 +45,7 @@ header{
     left: 0;
     bottom: 0;
     width: 100%;
-
-    background-color: red;
-
     background-color: orange;
-
     color: white;
     text-align: center;
 }
@@ -70,7 +56,6 @@ header{
     padding: 10px;
     margin-top: 100px;
 }
-
 
 /* Style the active/current link*/
 .header a.active {
@@ -83,7 +68,7 @@ header{
 .wrap{
     width: 350px;
     margin: auto;
-    background: #0000FF;
+    background: #4C4CFF;
     margin-top: 10px;
     padding: 10px;
 }
