@@ -1,0 +1,65 @@
+
+body{
+   font-family: Arial,Sans-Serif, Helvetica;
+   background-color: #0000FF;
+}
+
+header{
+    padding: 20px 15px;
+    overflow: hidden;
+}
+
+.header a {
+    float: left;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    font-size: 15px;
+    padding: 10px;
+    line-height: 20px;
+}
+
+.header a.brand {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.header-right {
+    float: right;
+}
+
+.header a:hover {
+    background-color: #FF0000;
+    color: black;
+}
+
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: red;
+    color: white;
+    text-align: center;
+}
+
+.main-column {
+    float: left;
+    width: 33.33%;
+    padding: 10px;
+    margin-top: 100px;
+}
+
+/* Clear floats after the main-columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: all;
+}
+
+
+.centered {
+    text-align: left;
+}
+
