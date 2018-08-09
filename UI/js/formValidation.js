@@ -66,3 +66,22 @@ function validateForm() {
     
 }
 
+function validatelogin()
+{
+       var Email = document.forms["login"]["email_or_username"].value;
+    if (Email == "") {
+        alert("Email/Username must be filled out");
+        document.forms["login"]["email_or_username"].focus();
+        return false;
+    }
+
+    //Password validation
+    var Password = document.forms["login"]["password"].value;
+    if (Password== "") {
+        alert("Password must be filled out");
+        document.forms["login"]["password"].focus();
+        return false;
+    }
+
+}
+
