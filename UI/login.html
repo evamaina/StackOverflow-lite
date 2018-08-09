@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SignUp Form</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link href="css/style.css" type="text/css" rel="stylesheet"/>
+<!-- script for form validation that ensures all fields are filled-->
+	<script src="js/formValidation.js"></script>
+
+</head>
+<body>
+	<div class="header">
+	  <a href="#" class="brand">StackOverflow-lite</a>
+	  <div class="header-right">
+	    <a href="signup.html" class="active">Sign Up</a>
+	  </div>
+	</div>
+
+	<div class="wrap">
+		<form action="home.html" name="login" >
+			<h2>Member Login</h2>
+			<input type="text" name="email_or_username" placeholder="Enter username/email">
+			<input type="password" name="password" placeholder="Enter your password">
+			<br>
+			<br>
+			<!-- validate function is called when submit button is clicked-->
+			<input type="submit" value="Login" onclick="return validatelogin()">
+
+
+		</form>
+	</div>
+	
+<footer class="footer">
+  <p>&copy; Copyright 2018, StackOverFlow-lite</p>
+</footer>
+
+</body>
+</html>
