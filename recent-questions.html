@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>recent questions</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link href="css/style.css" type="text/css" rel="stylesheet"/>
+
+</head>
+<body>
+  <div class="header">
+    <a href="#" class="brand">StackOverflow-lite</a>
+    <div class="header-right">
+      <a href="home.html">Home</a>
+      <a href="profile.html">Profile</a>
+        <a href="post-question.html">Post Question</a>
+        <a href="recent-questions.html" class="active">Recent Questions</a>
+      <a href="index.html">Logout </a>
+    </div>
+  </div>
+  <br> 
+    
+    <h2 class="post_q">Recent Questions</h2>
+    <div class="wrap_q">
+      
+      <form>
+          <h3>Q1) My android studio was working fine a couple of days back and run configuration was also ok but now i am having issue with it ... I am getting a cross ( x ) sign over the android icon </h3>   
+          <textarea class="textarea" rows="3" cols="60" required placeholder="Be first to Answer"></textarea>
+          <br>
+        <input class="submit_q" type="button" value="Reply">
+      </form>
+
+     <form>
+          <h3>Q2) Is there any way to see why some file is getting ignored by git (i.e. which rule in a .gitignore file is causing the file to be ignored)?</h3>
+          <h4>Answer 1 </h4>
+          <p>git does not currently provide anything like this. But after seeing your question I did some googling and found that back in 2009 this feature was requested and partially implemented. After reading the thread, I realised it would not be too much work to do it properly, so I have started work on a patch and hope to have it finished in the next day or two. I will update this answer when it is ready.</p>  
+          <textarea class="textarea" rows="3" cols="60" placeholder="Your Answer"></textarea>
+          <br>
+     
+        <input class="submit_q" type="button" value="Reply" placeholder="Add Answer">
+
+      </form>
+     
+    </div>
+</body>
+<footer class="footer">
+  <p class="copyright">&copy; Copyright 2018, StackOverFlow-lite</p>
+</footer>
+</html>
