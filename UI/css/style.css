@@ -96,6 +96,7 @@ header{
 .post_q{
         width: 350px;
         margin: auto;
+        margin-top: 50px;
 }
 .textarea{
         margin: auto;
