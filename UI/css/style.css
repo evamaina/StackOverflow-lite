@@ -48,18 +48,24 @@ header{
     text-align: center;
 }
 
-.main-column {
+.main-column-index{
     float: left;
-    width: 33.33%;
+    width: 33.3%;
     padding: 10px;
     margin-top: 100px;
 }
+
+.main-column {
+    float: left;
+    width: 49%;
+    padding: 10px;
+    margin-top: 50px;
+}
 .main-column2 {
     float: left;
-    width: 33.33%;
+    width: 49%;
     padding: 10px;
-    margin-top: 100px;
-    margin-top: 60;
+    margin-top: 50px;
 }
 
 .main-column3 {
@@ -91,6 +97,15 @@ header{
     background: #7abcff;
     margin-top: 10px;
     padding-bottom: 50px;
+}
+
+
+.wrap_q2{
+    margin: auto;
+    background: #7abcff;
+    margin-top: 10px;
+    padding-bottom: 50px;
+    float: left;
 }
 
 .post_q{
@@ -202,4 +217,8 @@ input[type="submit"]:hover{
     .img{
       width:200px;
       height:180px;
+    }
+    span{
+      font-weight: bold;
+      color: white;
     }
