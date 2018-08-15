@@ -1,8 +1,10 @@
 import unittest
 import os
 import json
+
 from app.app import create_app
 from app.models.user import User
+
 
 
 class TestUserFunctinality(unittest.TestCase):
@@ -38,10 +40,10 @@ class TestUserFunctinality(unittest.TestCase):
         """
         response = self.app.post("/api/v1/register",
                                  data=json.dumps(dict(first_name="",
-                                                      last_name="testlastnam",
-                                                      username="testusername",
-                                                      email="testEvet@gmail.com",
-                                                      password="testpassword",
+        											  last_name="testlastnam",
+                                 	                  username="testusername",
+                                 	                  email="testEvet@gmail.com",
+                                 	                  password="testpassword",
                                                       confirm_password="testconfirmpassword")),
                                  content_type="application/json")
         self.assertEqual(response.status_code, 401)
@@ -138,5 +140,7 @@ class TestUserFunctinality(unittest.TestCase):
                                  content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("Enter correct email address",
+        self.assertIn("Enter valid email address",
                       response_msg["Message"])
+
+    
