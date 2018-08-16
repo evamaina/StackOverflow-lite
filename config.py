@@ -6,22 +6,21 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET')
     
-
 class DevelopmentConfig(Config):
-    """ Development Configurations."""
+    """Configurations for Development."""
     DEBUG = True
 
 class TestingConfig(Config):
-    """Testing Configurations ."""
+    """Configurations for Testing, with a separate test database."""
     TESTING = True
     DEBUG = True
 
 class StagingConfig(Config):
-    """ Staging Configurations"""
+    """Configurations for Staging."""
     DEBUG = True
 
 class ProductionConfig(Config):
-    """ Production Configurations."""
+    """Configurations for Production."""
     DEBUG = False
     TESTING = False
 
@@ -31,6 +30,3 @@ app_config = {
     'staging': StagingConfig,
     'production': ProductionConfig,
 }
-
-
-

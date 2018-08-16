@@ -1,6 +1,5 @@
-class Answer(object):
-    """"
-    implements answer functionality
-    """
-    def __init__(self):
-        self.answers = {}
+class Answer():
+    """class to implement answer fuctionality"""
+    pass
+
+    
