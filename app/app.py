@@ -9,7 +9,7 @@ from app.models.users import User
 
 
 user = User()
-# question = Question('title', 'content')
+question = Question('title', 'content')
 # answer = Answer('answer_body')
 
 
