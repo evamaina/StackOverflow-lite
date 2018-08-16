@@ -9,8 +9,8 @@ from app.models.users import User
 
 
 user = User()
-question = Question('title', 'content')
-answer = Answer('answer_body')
+# question = Question('title', 'content')
+# answer = Answer('answer_body')
 
 
 def create_app(config_name):
@@ -61,7 +61,8 @@ def create_app(config_name):
                 'Message': 'User successfully created',
                 'User': user.users[-1]}), 201
 
-
+    
     
     return app
 
+    
