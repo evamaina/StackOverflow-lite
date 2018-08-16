@@ -1,5 +1,5 @@
-class Answer(object):
-    """"
-    implements answer functionality
-    """
+class Answer():
+    """class to implement answer fuctionality"""
+    pass
+
     
