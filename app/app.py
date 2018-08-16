@@ -32,10 +32,10 @@ def create_app(config_name):
         is_valid_email = validate_email(email)
         if not(first_name.strip()):
             return jsonify({'Message':
-                            'First name is required'}), 401 
+                            'First name is required'}), 401
         if not(last_name.strip()):
             return jsonify({'Message':
-                            'Last name is required'}), 401 
+                            'Last name is required'}), 401
         if not(username.strip()):
             return jsonify({'Message':
                             'Username is required'}), 401
@@ -44,7 +44,7 @@ def create_app(config_name):
                             'Enter valid email'}), 401
         if not(password.strip()):
             return jsonify({'Message':
-                            'Password is required'}), 401 
+                            'Password is required'}), 401
         if not(confirm_password.strip()):
             return jsonify({'Message':
                             'You must confirm your password'}), 401
@@ -55,14 +55,23 @@ def create_app(config_name):
         if(password != confirm_password):
             return jsonify({"message": "password mismatch"}), 409
 
-        user.create_user(user_id, first_name,last_name,username, email, password,confirm_password)
+        user.create_user(user_id, first_name, last_name,
+                         username, email, password, confirm_password)
 
         return jsonify({
-                'Message': 'User successfully created',
-                'User': user.users[-1]}), 201
+            'Message': 'User successfully created',
+            'User': user.users[-1]}), 201
 
-    
-    
+    @app.route("/api/v1/login", methods=["POST"])
+    def login_user():
+        request_data = request.get_json()
+        username_or_email = request_data["username_or_email"]
+        password = request_data["password"]
+        for usser in user.users:
+            if (usser["username"] == username_or_email or
+                    usser["email"] == username_or_email) and usser["password"] == password:
+                return jsonify({"message": "User logged in successfully", "User": usser}), 200
+
+        return jsonify({"message": "Enter correct username or password"}), 404
+
     return app
-
-    
