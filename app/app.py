@@ -1,4 +1,3 @@
-# from flask_api import FlaskAPI
 from flask import Flask, request, jsonify
 from validate_email import validate_email
 from datetime import datetime
@@ -20,7 +19,6 @@ def create_app(config_name):
 
     @app.route("/api/v1/register", methods=["POST"])
     def register_new_user():
-        pass
         request_data = request.get_json()
         user_id = str(len(user.users) + 1)
         first_name = request_data["first_name"]
@@ -73,5 +71,36 @@ def create_app(config_name):
                 return jsonify({"message": "User logged in successfully", "User": usser}), 200
 
         return jsonify({"message": "Enter correct username or password"}), 404
+
+    @app.route("/api/v1/question", methods=["POST"])
+    def post_question():
+        request_data = request.get_json()
+        question_id = str(len(question.questions) + 1)
+        title = request_data["title"]
+        content = request_data["content"]
+        date_posted=  datetime.now()
+        if not(title.strip()):
+            return jsonify({'Message':
+                           'Title is required'}), 401
+        if not(content.strip()):
+            return jsonify({'Message':
+                            'Content is required'}), 401
+    
+        question.post_question(question_id, title, content,date_posted)
+        return jsonify({
+                'Message': 'Question posted',
+                'Question': question.questions[-1]}), 201
+
+    @app.route("/api/v1/questions", methods=["GET"])
+    def get_all_questions():
+        return jsonify({"Questions":question.questions}),200
+
+
+    @app.route("/api/v1/question/<id>", methods=["GET"])
+    def get_a_question_by_id(id):
+        for quest in question.questions:
+            if id == quest["question_id"]:
+                return jsonify({"message":"Question found"}),200
+        return jsonify({"message":"Question not found"}),404
 
     return app
