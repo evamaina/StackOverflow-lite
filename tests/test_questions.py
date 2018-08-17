@@ -5,7 +5,7 @@ from app.app import create_app
 from app.models.questions import Question
 
 
-class TestUserFunctinality(unittest.TestCase):
+class TestQuestionFunctinality(unittest.TestCase):
     """This class represents the question test case"""
 
     def setUp(self):
