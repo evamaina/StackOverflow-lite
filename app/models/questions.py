@@ -13,7 +13,8 @@ class Question(object):
             'question_id': question_id,
             'title': title,
             'content': content,
-            'date_posted':date_posted}
+            'date_posted':date_posted
+            }
 
         self.questions.append(new_question)
         return (self.questions)

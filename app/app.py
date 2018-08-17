@@ -5,6 +5,7 @@ from config import app_config
 from app.models.questions import Question
 from app.models.answers import Answer
 from app.models.users import User
+from app.common.validation import *
 
 
 user = User()
@@ -21,40 +22,19 @@ def create_app(config_name):
     def register_new_user():
         request_data = request.get_json()
         user_id = str(len(user.users) + 1)
-        first_name = request_data["first_name"]
-        last_name = request_data["last_name"]
-        username = request_data["username"]
-        email = request_data["email"]
-        password = request_data["password"]
-        confirm_password = request_data["confirm_password"]
-        is_valid_email = validate_email(email)
-        if not(first_name.strip()):
-            return jsonify({'Message':
-                            'First name is required'}), 401
-        if not(last_name.strip()):
-            return jsonify({'Message':
-                            'Last name is required'}), 401
-        if not(username.strip()):
-            return jsonify({'Message':
-                            'Username is required'}), 401
-        if not (is_valid_email):
-            return jsonify({'Message':
-                            'Enter valid email'}), 401
-        if not(password.strip()):
-            return jsonify({'Message':
-                            'Password is required'}), 401
-        if not(confirm_password.strip()):
-            return jsonify({'Message':
-                            'You must confirm your password'}), 401
-        for person in user.users:
-            if username == person["username"] or email == person["email"]:
-                return jsonify({"message": "User already exist"}), 409
+        validate_user_msg=validate_user_registration(request_data)
+        if(validate_user_msg != True):
+            return validate_user_msg
+        valid_email = validate_user_email(request_data)
+        if(valid_email != True):
+            return valid_email
 
-        if(password != confirm_password):
-            return jsonify({"message": "password mismatch"}), 409
+        validate_user_exist_msg=validate_user_exist(request_data,user.users)
+        if(validate_user_exist_msg != True):
+            return validate_user_exist_msg
 
-        user.create_user(user_id, first_name, last_name,
-                         username, email, password, confirm_password)
+        user.create_user(user_id, request_data["first_name"], request_data["last_name"],
+                         request_data["username"], request_data["email"], request_data["password"])
 
         return jsonify({
             'Message': 'User successfully created',
@@ -68,9 +48,27 @@ def create_app(config_name):
         for person in user.users:
             if (person["username"] == username_or_email or
                     person["email"] == username_or_email) and person["password"] == password:
-                return jsonify({"message": "User logged in successfully", "User": person}), 200
+                if(person["login_status"] == False):
+                    person["login_status"] =True
+                    return jsonify({"message": "User logged in successfully", "User": person}), 200                    
+                else:
+                    return jsonify({"message": "User Already Logged in", "User": person}), 409
+            return jsonify({"message": "Enter correct username or password"}), 404
+        return jsonify({"message": "User does not exist"}), 404
 
-        return jsonify({"message": "Enter correct username or password"}), 404
+    
+    @app.route('/api/v1/logout', methods=['POST'])
+    def logout_user():
+        request_data = request.get_json()
+        username_or_email = request_data['username_or_email']
+        for person in user.users:
+            if (person["username"] == username_or_email or
+                person["email"] == username_or_email) and person["login_status"] == True:
+                person["login_status"] = False
+                return jsonify({'Message': 'User logged out successfully.'}), 200
+
+        return jsonify({'Message': 'User is not logged in, please login.'}), 401
+
 
     @app.route("/api/v1/question", methods=["POST"])
     def post_question():
@@ -79,28 +77,35 @@ def create_app(config_name):
         title = request_data["title"]
         content = request_data["content"]
         date_posted = datetime.now()
-        if not(title.strip()):
-            return jsonify({'Message':
-                            'Title is required'}), 401
-        if not(content.strip()):
-            return jsonify({'Message':
-                            'Content is required'}), 401
+        validate_question_msg=validate_question(request_data)
 
-        question.post_question(question_id, title, content, date_posted)
-        return jsonify({
-            'Message': 'Question posted',
-            'Question': question.questions[-1]}), 201
+        if(validate_question_msg != True):
+            return validate_question_msg
+
+        for quest in question.questions:
+            if title == quest["title"]:
+                return jsonify({"message":"Question already asked", "Question": quest}), 409 
+        for person in user.users:
+            if person["login_status"] == True:
+                question.post_question(question_id, title, content, date_posted)
+                return jsonify({
+                    'Message': 'Question posted',
+                    'Question': question.questions[-1]}), 201
+        return jsonify({"message": "Login to post a question"}), 400 
 
     @app.route("/api/v1/questions", methods=["GET"])
     def get_all_questions():
         return jsonify({"Questions": question.questions}), 200
 
+
     @app.route("/api/v1/question/<id>", methods=["GET"])
     def get_a_question_by_id(id):
         for quest in question.questions:
             if id == quest["question_id"]:
-                return jsonify({"message": "Question found", "Question": quest}), 200
+                return jsonify({"message":"Question found", "Question": quest}), 200
         return jsonify({"message": "Question not found"}), 404
+
+
     @app.route("/api/v1/answer/<questionId>", methods=["POST"])
     def add_answer(questionId):
         request_data = request.get_json()
@@ -109,24 +114,22 @@ def create_app(config_name):
         answer_body = request_data["answer_body"]
         username = request_data["username"]
         date_posted = datetime.now()
-        if not(username.strip()):
-            return jsonify({'Message':
-                            'Username is required'}), 401
-        if not(question_id.strip()):
-            return jsonify({'Message':
-                            'Question id is required'}), 401
-        if not(answer_body.strip()):
-            return jsonify({'Message':
-                            'Answer body is required'}), 401
+        validate_answer_msg=validate_answer(request_data)
+        if(validate_answer_msg != True):
+            return validate_answer_msg
+
         if(questionId != question_id):
             return jsonify({"Message": "Enter correct id"}), 409
+
         for quest in question.questions:
             if int(questionId) == int(quest["question_id"]):
-                answer.post_answer(answer_id, question_id,
+                for person in user.users:
+                    if person["login_status"] == True:
+                        answer.post_answer(answer_id, question_id,
                                    answer_body, username, date_posted)
-                return jsonify({"Message": "Answer added successfully",
+                        return jsonify({"Message": "Answer added successfully",
                                 "Answer": answer.answers[-1]}), 200
+                    return jsonify({"message": "Login to post a answer"}), 400 
             return jsonify({"Message": "Question with that id not found"}), 404
-    
 
     return app
