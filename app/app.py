@@ -101,7 +101,32 @@ def create_app(config_name):
             if id == quest["question_id"]:
                 return jsonify({"message": "Question found", "Question": quest}), 200
         return jsonify({"message": "Question not found"}), 404
-
+    @app.route("/api/v1/answer/<questionId>", methods=["POST"])
+    def add_answer(questionId):
+        request_data = request.get_json()
+        answer_id = str(len(answer.answers) + 1)
+        question_id = request_data["question_id"]
+        answer_body = request_data["answer_body"]
+        username = request_data["username"]
+        date_posted = datetime.now()
+        if not(username.strip()):
+            return jsonify({'Message':
+                            'Username is required'}), 401
+        if not(question_id.strip()):
+            return jsonify({'Message':
+                            'Question id is required'}), 401
+        if not(answer_body.strip()):
+            return jsonify({'Message':
+                            'Answer body is required'}), 401
+        if(questionId != question_id):
+            return jsonify({"Message": "Enter correct id"}), 409
+        for quest in question.questions:
+            if int(questionId) == int(quest["question_id"]):
+                answer.post_answer(answer_id, question_id,
+                                   answer_body, username, date_posted)
+                return jsonify({"Message": "Answer added successfully",
+                                "Answer": answer.answers[-1]}), 200
+            return jsonify({"Message": "Question with that id not found"}), 404
     
 
     return app
