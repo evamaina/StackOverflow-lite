@@ -9,7 +9,7 @@ from app.models.users import User
 
 user = User()
 question = Question('title', 'content')
-# answer = Answer('answer_body')
+answer = Answer('answer_body','username')
 
 
 def create_app(config_name):
@@ -46,8 +46,8 @@ def create_app(config_name):
         if not(confirm_password.strip()):
             return jsonify({'Message':
                             'You must confirm your password'}), 401
-        for usser in user.users:
-            if username == usser["username"] or email == usser["email"]:
+        for person in user.users:
+            if username == person["username"] or email == person["email"]:
                 return jsonify({"message": "User already exist"}), 409
 
         if(password != confirm_password):
@@ -65,10 +65,10 @@ def create_app(config_name):
         request_data = request.get_json()
         username_or_email = request_data["username_or_email"]
         password = request_data["password"]
-        for usser in user.users:
-            if (usser["username"] == username_or_email or
-                    usser["email"] == username_or_email) and usser["password"] == password:
-                return jsonify({"message": "User logged in successfully", "User": usser}), 200
+        for person in user.users:
+            if (person["username"] == username_or_email or
+                    person["email"] == username_or_email) and person["password"] == password:
+                return jsonify({"message": "User logged in successfully", "User": person}), 200
 
         return jsonify({"message": "Enter correct username or password"}), 404
 
@@ -78,29 +78,30 @@ def create_app(config_name):
         question_id = str(len(question.questions) + 1)
         title = request_data["title"]
         content = request_data["content"]
-        date_posted=  datetime.now()
+        date_posted = datetime.now()
         if not(title.strip()):
             return jsonify({'Message':
-                           'Title is required'}), 401
+                            'Title is required'}), 401
         if not(content.strip()):
             return jsonify({'Message':
                             'Content is required'}), 401
-    
-        question.post_question(question_id, title, content,date_posted)
+
+        question.post_question(question_id, title, content, date_posted)
         return jsonify({
-                'Message': 'Question posted',
-                'Question': question.questions[-1]}), 201
+            'Message': 'Question posted',
+            'Question': question.questions[-1]}), 201
 
     @app.route("/api/v1/questions", methods=["GET"])
     def get_all_questions():
-        return jsonify({"Questions":question.questions}),200
-
+        return jsonify({"Questions": question.questions}), 200
 
     @app.route("/api/v1/question/<id>", methods=["GET"])
     def get_a_question_by_id(id):
         for quest in question.questions:
             if id == quest["question_id"]:
-                return jsonify({"message":"Question found"}),200
-        return jsonify({"message":"Question not found"}),404
+                return jsonify({"message": "Question found", "Question": quest}), 200
+        return jsonify({"message": "Question not found"}), 404
+
+    
 
     return app
