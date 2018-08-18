@@ -15,30 +15,6 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.question = {"title": "No module found error",
                          "content": "What is the correct way to fix this ImportError error?"
                      }
-    def test_user_can_post_question(self):
-        """
-        Tests a user can post a question.
-        """
-        response = self.client.post("/api/v1/register",
-                                    data=json.dumps(dict(first_name="joyce",
-                                                         last_name="korir",
-                                                         username="joykorry",
-                                                         email="joy@gmail.com",
-                                                         password="joy")),
-                                    content_type="application/json")
-
-        response = self.client.post("/api/v1/login",
-                                    data=json.dumps(dict(
-                                        username_or_email="joykorry",
-                                        password="joy")),
-                                    content_type="application/json")
-
-        response = self.client.post("/api/v1/question",
-                                    data=json.dumps(self.question),
-                                    content_type="application/json")
-        self.assertEqual(response.status_code, 201)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Question posted", response_msg["Message"])
     
     def test_post_question_empty_content(self):
         """
@@ -130,16 +106,31 @@ class TestQuestionFunctinality(unittest.TestCase):
     	self.assertIn("Question already asked", response_msg["message"])
 
 
+    def test_user_can_post_question(self):
+        """
+        Tests a user can post a question.
+        """
+        response = self.client.post("/api/v1/register",
+                                    data=json.dumps(dict(first_name="joyce",
+                                                         last_name="korir",
+                                                         username="joykorry",
+                                                         email="joy@gmail.com",
+                                                         password="joy")),
+                                    content_type="application/json")
 
-    
-    def test_user_must_login_to_post_question(self):
-    	response = self.client.post("/api/v1/question",
-                                 data=json.dumps(dict(
-                                 title="tesyhgt",
-                                 content="nbghtfrd jhgty")),
+        response = self.client.post("/api/v1/login",
+                                    data=json.dumps(dict(
+                                        username_or_email="joykorry",
+                                        password="joy")),
+                                    content_type="application/json")
+
+        response = self.client.post("/api/v1/question",
+                                 data=json.dumps(dict(title="sdgetr git branch",
+                                                      content="asdgfh ndgts")),
                                  content_type="application/json")
-    	self.assertEqual(response.status_code, 400)
-    	response_msg = json.loads(response.data.decode("UTF-8"))
-    	self.assertIn("Login to post a question", response_msg["message"])
-
-
+        self.assertEqual(response.status_code, 201)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertEqual("Question posted", response_msg["Message"])
+    
+    
+    

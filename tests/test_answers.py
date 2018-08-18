@@ -104,6 +104,28 @@ class TestAnswerFunctinality(unittest.TestCase):
         self.assertEqual("Enter correct id",
                       response_msg["Message"])
 
+    
+
+    def test_user_must_login_to_answer_question(self):
+        # response = self.client.post("/api/v1/register",
+        #                             data=json.dumps(dict(first_name="jyce",
+        #                                                  last_name="krir",
+        #                                                  username="jkorry",
+        #                                                  email="jy@gmal.com",
+        #                                                  password="jy")),
+        #                             content_type="application/json")
+
+        response = self.client.post("/api/v1/question",
+                                    data=json.dumps(self.question),
+                                    content_type="application/json")
+        response = self.client.post("/api/v1/answer/1",
+                                    data=json.dumps(self.answer),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Login to post a answer", response_msg["message"])
+   
+
     def test_post_answer_with_id_that_does_not_exist(self):
         """
         Tests user cannnot answer a question that does not exist
@@ -136,13 +158,4 @@ class TestAnswerFunctinality(unittest.TestCase):
         self.assertEqual("Question with that id not found",
                       response_msg["Message"])
 
-    def test_user_must_login_to_answer_question(self):
-    	response = self.client.post("/api/v1/answer",
-                                 data=json.dumps(dict(
-                                 title="tesyhgt bgcv",
-                                 content="nbghtfrd jhgty bgfv")),
-                                 content_type="application/json")
-    	self.assertEqual(response.status_code, 400)
-    	response_msg = json.loads(response.data.decode("UTF-8"))
-    	self.assertIn("Login to post a answer", response_msg["message"])
    

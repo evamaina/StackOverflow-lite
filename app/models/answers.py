@@ -14,7 +14,8 @@ class Answer():
                   "answer_id":answer_id,
                   "answer_body":answer_body,
                   "date_posted":date_posted,
-                  "question_id":question_id
+                  "question_id":question_id,
+                  "username":username
                   }
 
         self.answers.append(new_answers)
