@@ -1,0 +1,132 @@
+from flask import Flask, request, jsonify
+from validate_email import validate_email
+from datetime import datetime
+from config import app_config
+from app.models.questions import Question
+from app.models.answers import Answer
+from app.models.users import User
+
+
+user = User()
+question = Question('title', 'content')
+answer = Answer('answer_body','username')
+
+
+def create_app(config_name):
+
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object(app_config[config_name])
+
+    @app.route("/api/v1/register", methods=["POST"])
+    def register_new_user():
+        request_data = request.get_json()
+        user_id = str(len(user.users) + 1)
+        first_name = request_data["first_name"]
+        last_name = request_data["last_name"]
+        username = request_data["username"]
+        email = request_data["email"]
+        password = request_data["password"]
+        confirm_password = request_data["confirm_password"]
+        is_valid_email = validate_email(email)
+        if not(first_name.strip()):
+            return jsonify({'Message':
+                            'First name is required'}), 401
+        if not(last_name.strip()):
+            return jsonify({'Message':
+                            'Last name is required'}), 401
+        if not(username.strip()):
+            return jsonify({'Message':
+                            'Username is required'}), 401
+        if not (is_valid_email):
+            return jsonify({'Message':
+                            'Enter valid email'}), 401
+        if not(password.strip()):
+            return jsonify({'Message':
+                            'Password is required'}), 401
+        if not(confirm_password.strip()):
+            return jsonify({'Message':
+                            'You must confirm your password'}), 401
+        for person in user.users:
+            if username == person["username"] or email == person["email"]:
+                return jsonify({"message": "User already exist"}), 409
+
+        if(password != confirm_password):
+            return jsonify({"message": "password mismatch"}), 409
+
+        user.create_user(user_id, first_name, last_name,
+                         username, email, password, confirm_password)
+
+        return jsonify({
+            'Message': 'User successfully created',
+            'User': user.users[-1]}), 201
+
+    @app.route("/api/v1/login", methods=["POST"])
+    def login_user():
+        request_data = request.get_json()
+        username_or_email = request_data["username_or_email"]
+        password = request_data["password"]
+        for person in user.users:
+            if (person["username"] == username_or_email or
+                    person["email"] == username_or_email) and person["password"] == password:
+                return jsonify({"message": "User logged in successfully", "User": person}), 200
+
+        return jsonify({"message": "Enter correct username or password"}), 404
+
+    @app.route("/api/v1/question", methods=["POST"])
+    def post_question():
+        request_data = request.get_json()
+        question_id = str(len(question.questions) + 1)
+        title = request_data["title"]
+        content = request_data["content"]
+        date_posted = datetime.now()
+        if not(title.strip()):
+            return jsonify({'Message':
+                            'Title is required'}), 401
+        if not(content.strip()):
+            return jsonify({'Message':
+                            'Content is required'}), 401
+
+        question.post_question(question_id, title, content, date_posted)
+        return jsonify({
+            'Message': 'Question posted',
+            'Question': question.questions[-1]}), 201
+
+    @app.route("/api/v1/questions", methods=["GET"])
+    def get_all_questions():
+        return jsonify({"Questions": question.questions}), 200
+
+    @app.route("/api/v1/question/<id>", methods=["GET"])
+    def get_a_question_by_id(id):
+        for quest in question.questions:
+            if id == quest["question_id"]:
+                return jsonify({"message": "Question found", "Question": quest}), 200
+        return jsonify({"message": "Question not found"}), 404
+    @app.route("/api/v1/answer/<questionId>", methods=["POST"])
+    def add_answer(questionId):
+        request_data = request.get_json()
+        answer_id = str(len(answer.answers) + 1)
+        question_id = request_data["question_id"]
+        answer_body = request_data["answer_body"]
+        username = request_data["username"]
+        date_posted = datetime.now()
+        if not(username.strip()):
+            return jsonify({'Message':
+                            'Username is required'}), 401
+        if not(question_id.strip()):
+            return jsonify({'Message':
+                            'Question id is required'}), 401
+        if not(answer_body.strip()):
+            return jsonify({'Message':
+                            'Answer body is required'}), 401
+        if(questionId != question_id):
+            return jsonify({"Message": "Enter correct id"}), 409
+        for quest in question.questions:
+            if int(questionId) == int(quest["question_id"]):
+                answer.post_answer(answer_id, question_id,
+                                   answer_body, username, date_posted)
+                return jsonify({"Message": "Answer added successfully",
+                                "Answer": answer.answers[-1]}), 200
+            return jsonify({"Message": "Question with that id not found"}), 404
+    
+
+    return app
