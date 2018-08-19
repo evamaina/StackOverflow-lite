@@ -82,7 +82,7 @@ def create_app(config_name):
 
         for quest in question.questions:
             if title == quest["title"]:
-                return jsonify({"message":"Question already asked", "Question": quest}), 409
+                return jsonify({"message": "Question already asked", "Question": quest}), 409
         for person in user.users:
             if person["login_status"] == True:
                 question.post_question(
