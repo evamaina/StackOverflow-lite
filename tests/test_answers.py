@@ -117,13 +117,13 @@ class TestAnswerFunctinality(unittest.TestCase):
     
 
     def test_user_must_login_to_answer_question(self):
-        # response = self.client.post("/api/v1/register",
-        #                             data=json.dumps(dict(first_name="jyce",
-        #                                                  last_name="krir",
-        #                                                  username="jkorry",
-        #                                                  email="jy@gmal.com",
-        #                                                  password="jy")),
-        #                             content_type="application/json")
+        response = self.client.post("/api/v1/register",
+                                    data=json.dumps(dict(first_name="jyce",
+                                                         last_name="krir",
+                                                         username="jkorry",
+                                                         email="jy@gmal.com",
+                                                         password="jy")),
+                                    content_type="application/json")
 
         response = self.client.post("/api/v1/question",
                                     data=json.dumps(self.question),
