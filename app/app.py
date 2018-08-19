@@ -68,6 +68,10 @@ def create_app(config_name):
 
         return jsonify({'Message': 'User is not logged in, please login.'}), 401
 
+    @app.route("/api/v1/users", methods=["GET"])
+    def get_all_users():
+        return jsonify({"Users": user.users}), 200
+
     @app.route("/api/v1/question", methods=["POST"])
     def post_question():
         request_data = request.get_json()
@@ -128,5 +132,9 @@ def create_app(config_name):
                                         "Answer": answer.answers[-1]}), 200
                     return jsonify({"message": "Login to post a answer"}), 400
             return jsonify({"Message": "Question with that id not found"}), 404
+
+    @app.route("/api/v1/answers/<questionId>", methods=["GET"])
+    def get_all_answers(questionId):
+        return jsonify({"Answers": answer.answers}), 200
 
     return app

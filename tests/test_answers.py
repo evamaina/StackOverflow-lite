@@ -104,6 +104,16 @@ class TestAnswerFunctinality(unittest.TestCase):
         self.assertEqual("Enter correct id",
                       response_msg["Message"])
 
+    def test_user_can_fetch_all_answers(self):
+        """
+        Tests user can get all answers for a partiular question.
+        """
+        response = self.client.get("/api/v1/answers/1",
+                                data=json.dumps(dict()),
+                                content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+
     
 
     def test_user_must_login_to_answer_question(self):
