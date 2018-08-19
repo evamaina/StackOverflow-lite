@@ -172,6 +172,16 @@ class TestUserFunctinality(unittest.TestCase):
         self.assertEqual("Password is required",
                          response_msg["Message"])
 
+    def test_user_can_get_all_users(self):
+        """
+        Tests user can get all users in the system.
+        """
+        response = self.client.get("/api/v1/users",
+                                data=json.dumps(dict()),
+                                content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+
     def test_user_can_login(self):
         """
         Test new user can login to the system.
