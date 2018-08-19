@@ -8,4 +8,7 @@ omit =
 omit =
     venv/*
     */python?.?/*
-    
+    app/__init__.py
+    tests/__init__.py
+    app/models
+
