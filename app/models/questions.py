@@ -8,12 +8,13 @@ class Question(object):
         self.date_posted = datetime.now()
         self.questions = []
         
-    def post_question(self,question_id, title, content,date_posted):
+    def post_question(self,question_id, title, content,date_posted,username):
         new_question = {
             'question_id': question_id,
             'title': title,
             'content': content,
-            'date_posted':date_posted
+            'date_posted':date_posted,
+            'posted_by':username
             }
 
         self.questions.append(new_question)

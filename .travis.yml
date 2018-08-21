@@ -1,13 +1,13 @@
 language: python
 python:
   - "3.6"
-  - "nightly" # latest version of python that is publicly available
+
 install:
   - "pip install pytest"
   - "pip install -r requirements.txt"
   - "pip install coveralls"
 
-script: python -m pytest tests/
+script: pytest --cov=app
 
 after_success:
 - coveralls 
