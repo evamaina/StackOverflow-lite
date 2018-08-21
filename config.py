@@ -7,11 +7,19 @@ class Config(object):
     SECRET = os.getenv('SECRET')
     
 class DevelopmentConfig(Config):
-    """Configurations for Development."""
+    """setting environment variables for the database."""
+    os.environ['DATABASE'] = 'stackoverflow'
+    os.environ['USER'] = 'stack'
+    os.environ['PASSWORD'] = 'stack123'
+    os.environ['HOST'] = 'localhost'
     DEBUG = True
 
 class TestingConfig(Config):
-    """Configurations for Testing, with a separate test database."""
+    """Configurations for Testing."""
+    os.environ['DATABASE'] = 'test-stackoverflow'
+    os.environ['USER'] = 'stack'
+    os.environ['PASSWORD'] = 'stack123'
+    os.environ['HOST'] = 'localhost'
     TESTING = True
     DEBUG = True
 
