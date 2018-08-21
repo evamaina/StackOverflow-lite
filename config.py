@@ -1,3 +1,4 @@
+
 import os
 
 class Config(object):
@@ -38,3 +39,4 @@ app_config = {
     'staging': StagingConfig,
     'production': ProductionConfig,
 }
+
