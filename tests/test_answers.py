@@ -3,6 +3,7 @@ import os
 import json
 from app.app import create_app
 from app.models.questions import Question
+from app.app import answer,question,user
 
 
 class TestAnswerFunctinality(unittest.TestCase):
@@ -15,10 +16,14 @@ class TestAnswerFunctinality(unittest.TestCase):
         self.question = {"title": "No module found error",
                          "content": "What is the correct way to fix this ImportError error?"
                      }
-        self.answer = {"question_id": "1",
-                       "username": "evet",
-                       "answer_body":"wertghdfggdggdg",
+        self.answer = {"answer_body":"wertghdfggdggdg"
                      }
+    def tearDown(self):
+      del user.users[:]
+      del question.questions[:]
+      del answer.answers[:]
+
+
     def test_user_can_post_answer(self):
         """
         Tests a user can post a question.
@@ -40,7 +45,7 @@ class TestAnswerFunctinality(unittest.TestCase):
         response = self.client.post("/api/v1/question",
                                     data=json.dumps(self.question),
                                     content_type="application/json")
-        response = self.client.post("/api/v1/answer/1",
+        response = self.client.post("/api/v1/questions/1/answers",
                                     data=json.dumps(self.answer),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -51,64 +56,20 @@ class TestAnswerFunctinality(unittest.TestCase):
         """
         Tests user cannnot answer a question without body 
         """
-        response = self.client.post("/api/v1/answer/1",
-                                 data=json.dumps(dict(question_id="1",
-                                                      username="evet",
-                                                      answer_body=" ")),
+        response = self.client.post("/api/v1/questions/1/answers",
+                                 data=json.dumps(dict(answer_body=" ")),
                                  content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Answer body is required",
                       response_msg["Message"])
 
-    def test_post_answer_blank_username(self):
-        """
-        Tests user cannnot answer a question without body 
-        """
-        response = self.client.post("/api/v1/answer/1",
-                                 data=json.dumps(dict(question_id="1",
-                                                      username="",
-                                                      answer_body="wertghdfggdggdg")),
-                                 content_type="application/json")
-        self.assertEqual(response.status_code, 401)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Username is required",
-                      response_msg["Message"]) 
-
-    def test_post_answer_empty_questionId(self):
-        """
-        Tests user cannnot answer a question with wrong question id 
-        """
-
-        response = self.client.post("/api/v1/answer/1",
-                                 data=json.dumps(dict(question_id="",
-                                                      username="evet",
-                                                      answer_body="wertghdfggdggdg")),
-                                 content_type="application/json")
-        self.assertEqual(response.status_code, 401)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Question id is required",
-                      response_msg["Message"])                   
-
-    def test_post_answer_incorrect_questionId(self):
-        """
-        Tests user cannnot answer a question without body 
-        """
-        response = self.client.post("/api/v1/answer/1",
-                                 data=json.dumps(dict(question_id="2",
-                                                      username="evet",
-                                                      answer_body="wertghdfggdggdg")),
-                                 content_type="application/json")
-        self.assertEqual(response.status_code, 409)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Enter correct id",
-                      response_msg["Message"])
-
+  
     def test_user_can_fetch_all_answers(self):
         """
         Tests user can get all answers for a partiular question.
         """
-        response = self.client.get("/api/v1/answers/1",
+        response = self.client.get("/api/v1/questions/1/answers",
                                 data=json.dumps(dict()),
                                 content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -126,14 +87,25 @@ class TestAnswerFunctinality(unittest.TestCase):
                                     content_type="application/json")
 
         response = self.client.post("/api/v1/question",
-                                    data=json.dumps(self.question),
+                                    data=json.dumps(dict(title="abdg gahs",
+                                    content = "wsertd vdfer")),
                                     content_type="application/json")
-        response = self.client.post("/api/v1/answer/1",
+        response = self.client.post("/api/v1/questions/1/answers",
                                     data=json.dumps(self.answer),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("Login to post a answer", response_msg["message"])
+        self.assertEqual("Login to post answer", response_msg["message"])
+
+    def test_user_must_be_registered_to_answer_question(self):
+        
+        response = self.client.post("/api/v1/questions/1/answers",
+                                    data=json.dumps(self.answer),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("User does not exist", response_msg["message"])
+   
    
 
     def test_post_answer_with_id_that_does_not_exist(self):
@@ -158,7 +130,7 @@ class TestAnswerFunctinality(unittest.TestCase):
                                     data=json.dumps(self.question),
                                     content_type="application/json")
 
-        response = self.client.post("/api/v1/answer/5",
+        response = self.client.post("/api/v1/questions/5/answers",
                                  data=json.dumps(dict(question_id="5",
                                                       username="evet",
                                                       answer_body="wertghdfggdggdg")),

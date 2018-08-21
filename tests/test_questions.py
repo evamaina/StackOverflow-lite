@@ -3,6 +3,7 @@ import os
 import json
 from app.app import create_app
 from app.models.questions import Question
+from app.app import answer,question,user
 
 
 class TestQuestionFunctinality(unittest.TestCase):
@@ -15,6 +16,10 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.question = {"title": "No module found error",
                          "content": "What is the correct way to fix this ImportError error?"
                      }
+    def tearDown(self):
+      del user.users[:]
+      del question.questions[:]
+      del answer.answers[:]
     
     def test_post_question_empty_content(self):
         """
@@ -82,7 +87,7 @@ class TestQuestionFunctinality(unittest.TestCase):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Question found", response_msg["message"])
     
-    def test_user_cant_get_question_by_id_that_does_not_exist(self):
+    def test_user_can_not_get_question_by_id_that_does_not_exist(self):
         response = self.client.get("/api/v1/question/5",
                                  data=json.dumps(dict(question_id=5)),
                                  content_type="application/json")
@@ -91,19 +96,31 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.assertIn("Question not found", response_msg["message"])
 
     def test_user_cant_ask_same_question_twice(self):
-    	response = self.client.post("/api/v1/question",
-                                 data=json.dumps(dict(
-                                 title="import error",
-                                 content="nbghtfrd jhgty")),
-                                 content_type="application/json")
-    	response = self.client.post("/api/v1/question",
-                                 data=json.dumps(dict(
-                                 title="import error",
-                                 content="nbghtfrd jhgty")),
-                                 content_type="application/json")
-    	self.assertEqual(response.status_code, 409)
-    	response_msg = json.loads(response.data.decode("UTF-8"))
-    	self.assertIn("Question already asked", response_msg["message"])
+        response = self.client.post("/api/v1/register",
+                                    data=json.dumps(dict(first_name="joyce",
+                                                         last_name="korir",
+                                                         username="joykorry",
+                                                         email="joy@gmail.com",
+                                                         password="joy")),
+                                    content_type="application/json")
+        response = self.client.post("/api/v1/login",
+                                    data=json.dumps(dict(
+                                    username_or_email="joykorry",
+                                    password="joy")),
+                                    content_type="application/json")
+        response = self.client.post("/api/v1/question",
+                                    data=json.dumps(dict(
+                                    title="import error bgfnhg",
+                                    content="nbghtfrd jhgty")),
+                                    content_type="application/json")
+        response = self.client.post("/api/v1/question",
+                                    data=json.dumps(dict(
+                                    title="import error bgfnhg",
+                                    content="nbghtfrd jhgty bgfvc")),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 409)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Question already asked", response_msg["message"])
 
 
     def test_user_can_post_question(self):
@@ -131,6 +148,25 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Question posted", response_msg["Message"])
-    
+
+    def test_user_must_login_to_post_question(self):
+        response = self.client.post("/api/v1/register",
+                                    data=json.dumps(dict(first_name="joyce",
+                                                         last_name="korir",
+                                                         username="joykorry",
+                                                         email="joy@gmail.com",
+                                                         password="joy")),
+                                    content_type="application/json")
+        
+        response = self.client.post("/api/v1/question",
+                                 data=json.dumps(dict(
+                                 title="tesyhgt",
+                                 content="nbghtfrd jhgty")),
+                                 content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Login to post a question", response_msg["message"])
+
+
     
     

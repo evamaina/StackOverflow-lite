@@ -9,13 +9,13 @@ class Answer():
         self.answer_date = datetime.now()
         self.answers = []
 
-    def post_answer(self, answer_id, question_id, answer_body,username, date_posted):
+    def post_answer(self, answer_id, question_id, answer_body, date_posted,username):
         new_answers = {
                   "answer_id":answer_id,
                   "answer_body":answer_body,
                   "date_posted":date_posted,
                   "question_id":question_id,
-                  "username":username
+                  "posted_by":username
                   }
 
         self.answers.append(new_answers)
