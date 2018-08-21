@@ -44,12 +44,7 @@ def validate_question(json):
     return True
 
 def validate_answer(json):
-    # if not(json["username"].strip()):
-    #         return jsonify({'Message':
-    #                         'Username is required'}), 401
-    # if not(json["question_id"].strip()):
-    #     return jsonify({'Message':
-    #                     'Question id is required'}), 401
+    
     if not(json["answer_body"].strip()):
         return jsonify({'Message':
                         'Answer body is required'}), 401
