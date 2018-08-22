@@ -25,8 +25,8 @@ def create_table():
                      
       
         'CREATE TABLE IF NOT EXISTS tokens (\
-                tId SERIAL PRIMARY KEY,\
-                token VARCHAR(155)\
+                token_id SERIAL PRIMARY KEY,\
+                token VARCHAR(200)\
                 )'
     
     ]
