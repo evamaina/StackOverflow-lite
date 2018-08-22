@@ -180,3 +180,19 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Question Removed Successifuly", response_msg["Message"])
+
+    def test_update_an_answer(self):
+        """
+        Tests a user can update answer or mark it as unread 
+        """
+        self.client.post("/api/questions/1/answers",
+                                 data=json.dumps(dict(question_id=1,
+                                 answer_body="ndgtdtr bdgsft")),
+                                 content_type="application/json")
+        response = self.app.put("/api/v2/questions/1/answers/answer",
+                                 data=json.dumps(dict(question_id= 1,
+                                 answer_body=" adfsrt hsftdre")),
+                                 content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Question Updated", response_msg["Message"])
