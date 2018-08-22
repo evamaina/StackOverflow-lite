@@ -165,3 +165,18 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Login to post a question", response_msg["message"])
+
+    def test_question_can_be_deleted(self):
+        """
+        Test a user can delete a question from the system.
+        """
+        self.client.post("/api/v2/question",
+                                 data=json.dumps(dict(title="hdfgstt bdgrts",
+                                 content ="bcgdtrt ndgtsrt")),
+                                 content_type="application/json")
+        response = self.client.delete("/api/v2/question/1",
+                                 data=json.dumps(dict(question_id=1)),
+                                 content_type="application/json")
+        self.assertEqual(response.status_code, 200)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertEqual("Question Removed Successifuly", response_msg["Message"])
