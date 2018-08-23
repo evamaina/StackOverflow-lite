@@ -10,12 +10,46 @@ from app.manage import Database
 
 db_connection = Database()
 
-user = User()
-question = Question()
-answer = Answer()
-
 
 def create_app(config_name):
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
+
+    @app.route("/api/v2/signup", methods=["POST"])
+    def register_new_user():
+        request_data = request.get_json()
+        first_name = request_data["first_name"]
+        last_name = request_data["last_name"]
+        username = request_data["username"]
+        email = request_data["email"]
+        password = request_data["password"]
+
+        validate_email_exist_msg = validate_email_exist(email)
+        if(validate_email_exist_msg == True):
+            return jsonify({'Message':'user with this email address exist'}),409    
+        validate_username_exist_msg = validate_username_exist(username)
+        if(validate_username_exist_msg == True):
+            return jsonify({"Message":"user with this username already exist"}),409
+        validate_user_msg = validate_user_registration(request_data)
+        if(validate_user_msg != True):
+            return validate_user_msg
+        valid_email = validate_user_email(request_data)
+        if(valid_email != True):
+            return valid_email
+
+        user = User(first_name,last_name,username,email,password)
+        user.save_user()
+        query = "SELECT  user_id FROM users WHERE email=%s"
+        cursor = db_connection.cursor()
+        row = cursor.execute(query, (email,))
+        user_id = cursor.fetchone()
+        token = User.token_generator(user_id)
+    
+        
+        return jsonify({'Message':
+                        "User successfully created","token": str(token)}), 201
+
+    db_connection.create_tables()
+
+    return app

@@ -1,7 +1,8 @@
 import unittest
 import os
 import json
-from app.app import db_connection
+from app.manage import Database
+db_connection = Database()
 from app.app import create_app
 from app.models.users import User
 
@@ -20,7 +21,7 @@ class TestUserFunctinality(unittest.TestCase):
                      "password": "evet123"
                      }
     def tearDown(self):
-        db.db_connection.drop_tables()
+        db_connection.drop_tables()
 
     def test_user_can_signup(self):
         """
@@ -44,7 +45,7 @@ class TestUserFunctinality(unittest.TestCase):
                                                          email="testEvet@gmail.com",
                                                          password="testpassword")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("First name is required",
                          response_msg["Message"])
@@ -60,7 +61,7 @@ class TestUserFunctinality(unittest.TestCase):
                                                          email="testEvet@gmail.com",
                                                          password="testpassword")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Last name is required",
                          response_msg["Message"])
@@ -76,7 +77,7 @@ class TestUserFunctinality(unittest.TestCase):
                                                          email="testEvet@gmail.com",
                                                          password="")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Password is required",
                          response_msg["Message"])
@@ -92,7 +93,7 @@ class TestUserFunctinality(unittest.TestCase):
                                                          email="asgf@gmail.com",
                                                          password="evvv")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Username is required",
                          response_msg["Message"])
@@ -154,7 +155,7 @@ class TestUserFunctinality(unittest.TestCase):
                                                          email="testEmail",
                                                          password="testpassword")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Enter a valid email",
                          response_msg["Message"])
@@ -238,7 +239,7 @@ class TestUserFunctinality(unittest.TestCase):
                                         username_or_email="maisha",
                                         password="me")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("User is not logged in, please login.",
                          response_msg["Message"])

@@ -28,7 +28,7 @@ class TestQuestionFunctinality(unittest.TestCase):
                                  data=json.dumps(dict(title="how to delete git branch",
                                                       content="")),
                                  content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Content is required",
                       response_msg["Message"])
@@ -41,7 +41,7 @@ class TestQuestionFunctinality(unittest.TestCase):
                                  data=json.dumps(dict(title="",
                                                       content="I want to delete a branch both locally..")),
                                  content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertIn("Title is required",
                       response_msg["Message"])
