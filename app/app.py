@@ -91,7 +91,7 @@ def create_app(config_name):
         return jsonify({"message": "Question already asked"}), 409
 
     
-    @app.route("/api/v1/questions/<question_id>/answers", methods=["POST"])
+    @app.route("/api/v2/questions/<question_id>/answers", methods=["POST"])
     @jwt_required
     def add_answer(question_id, user_id):
         request_data = request.get_json()
@@ -115,6 +115,18 @@ def create_app(config_name):
             answer.save_answer()
             return jsonify({"Message": "Answer added successfully"}), 200
         return jsonify({"message": "Question does not exist"}), 400
+
+    @app.route("/api/v2/questions", methods=["GET"])
+    def fetch_all_questions():
+        query ='SELECT * FROM questions'
+        cursor = db_connection.cursor()
+        cursor.execute(query)
+        row = cursor.fetchall()
+        if row:
+            return jsonify({"Questions": row}), 200
+        return jsonify({"Questions": "No questions"}), 200
+
+
 
                 
     db_connection.create_tables()
