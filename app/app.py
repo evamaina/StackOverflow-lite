@@ -124,7 +124,7 @@ def create_app(config_name):
         row = cursor.fetchall()
         if row:
             return jsonify({"Questions": row}), 200
-        return jsonify({"Questions": "No questions"}), 200
+        return jsonify({"Questions": "No questions found"}), 400
 
 
 
