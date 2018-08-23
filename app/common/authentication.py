@@ -1,4 +1,7 @@
-def jwt_required(func):
+from functools import wraps
+from flask import request
+from app.models.users import User
+def jwt_required(f):
    
     @wraps(f)
     def decorator(*args, **kwargs):
@@ -6,7 +9,7 @@ def jwt_required(func):
         auth_header = request.headers.get('Authorization')
         auth_token = auth_header.split("Bearer ")[1]
         if auth_token:
-            user_id = User.decode_token(auth_token)
+            user_id = User.decodetoken(auth_token)
             if not isinstance(user_id, str):
                 user_id = user_id
             else:
@@ -16,5 +19,5 @@ def jwt_required(func):
                 return jsonify(response), 401
         else:
             return False
-        return func(user_id=user_id, *args, **kwargs)
+        return f(user_id=user_id, *args, **kwargs)
     return decorator
