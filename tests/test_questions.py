@@ -19,8 +19,7 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.question = {"title": "No module found error",
                          "content": "What is the correct way to fix error?"
                      }
-    # def tearDown(self):
-    #     db_connection.drop_tables()
+    
 
     def test_post_question_empty_content(self):
         """
@@ -125,23 +124,23 @@ class TestQuestionFunctinality(unittest.TestCase):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Question posted", response_msg["Message"])
 
-    # def test_user_must_login_to_post_question(self):
-    #     response = self.client.post("/api/v2/signup",
-    #                                 data=json.dumps(dict(first_name="joyce",
-    #                                                      last_name="korir",
-    #                                                      username="joykorry",
-    #                                                      email="joy@gmail.com",
-    #                                                      password="joy")),
-    #                                 content_type="application/json")
+    def test_user_must_login_to_post_question(self):
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="joyce",
+                                                         last_name="korir",
+                                                         username="joykorry",
+                                                         email="joy@gmail.com",
+                                                         password="joy")),
+                                    content_type="application/json")
         
-    #     response = self.client.post("/api/v2/question",
-    #                              data=json.dumps(dict(
-    #                              title="tesyhgt",
-    #                              content="nbghtfrd jhgty")),
-    #                              content_type="application/json")
-    #     self.assertEqual(response.status_code, 400)
-    #     response_msg = json.loads(response.data.decode("UTF-8"))
-    #     self.assertIn("Login to post a question", response_msg["message"])
+        response = self.client.post("/api/v2/question",
+                                 data=json.dumps(dict(
+                                 title="tesyhgt",
+                                 content="nbghtfrd jhgty")),
+                                 content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertIn("Login to post a question", response_msg["message"])
 
     def test_question_can_be_deleted(self):
         """

@@ -18,10 +18,10 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Configurations for Testing."""
-    # os.environ['DATABASE'] = 'test-stackoverflow'
-    # os.environ['USER'] = 'stack'
-    # os.environ['PASSWORD'] = 'stack123'
-    # os.environ['HOST'] = 'localhost'
+    os.environ['DATABASE'] = 'test_stackoverflow'
+    os.environ['USER'] = 'stack'
+    os.environ['PASSWORD'] = 'stack123'
+    os.environ['HOST'] = 'localhost'
     TESTING = True
     DEBUG = True
 
