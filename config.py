@@ -9,6 +9,7 @@ class Config(object):
     
 class DevelopmentConfig(Config):
     """setting environment variables for the database."""
+    SECRET_KEY ="thisismeevet"
     os.environ['DATABASE'] = 'stackoverflow'
     os.environ['USER'] = 'stack'
     os.environ['PASSWORD'] = 'stack123'
@@ -17,10 +18,10 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     """Configurations for Testing."""
-    os.environ['DATABASE'] = 'test-stackoverflow'
-    os.environ['USER'] = 'stack'
-    os.environ['PASSWORD'] = 'stack123'
-    os.environ['HOST'] = 'localhost'
+    # os.environ['DATABASE'] = 'test-stackoverflow'
+    # os.environ['USER'] = 'stack'
+    # os.environ['PASSWORD'] = 'stack123'
+    # os.environ['HOST'] = 'localhost'
     TESTING = True
     DEBUG = True
 

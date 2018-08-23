@@ -18,7 +18,6 @@ class Database():
         cur = self.connection.cursor()
         for table in create_table():
             cur.execute(table)
-            print('tables created')
             self.connection.commit()
             print('table created  successfully')
             
