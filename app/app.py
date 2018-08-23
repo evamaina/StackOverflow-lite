@@ -52,4 +52,19 @@ def create_app(config_name):
 
     db_connection.create_tables()
 
+    @app.route("/api/v2/login", methods=["POST"])
+    def login_user():
+        request_data = request.get_json()
+        username = request_data["username"]
+        password = request_data["password"]
+        query = "SELECT * FROM users WHERE username=%s AND password=%s;"
+        cursor = db_connection.cursor()
+        cursor.execute(query, (username,password))
+        row = cursor.fetchone()
+        if row:
+            return jsonify({"message": "User logged in successfully"}), 200
+        return jsonify({"message": "Enter correct username or password"}), 401   
+
+
+    
     return app
