@@ -1,7 +1,6 @@
 import unittest
 import os
 import json
-# from app.app import db_connection
 from app.manage import Database
 db_connection = Database()
 from app.app import create_app
@@ -24,16 +23,16 @@ class TestUserFunctinality(unittest.TestCase):
     def tearDown(self):
         db_connection.drop_tables()
 
-    # def test_user_can_signup(self):
-    #     """
-    #     Test new user can be registered to the system.
-    #     """
-    #     response = self.client.post("/api/v2/signup",
-    #                                 data=json.dumps(self.user),
-    #                                 content_type="application/json")
-    #     self.assertEqual(response.status_code, 201)
-    #     response_msg = json.loads(response.data.decode("UTF-8"))
-    #     self.assertEqual("User successfully created", response_msg["Message"])
+    def test_user_can_signup(self):
+        """
+        Test new user can be registered to the system.
+        """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(self.user),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 201)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertEqual("User successfully created", response_msg["Message"])
 
     def test_user_registration_empty_firstname(self):
         """
