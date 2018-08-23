@@ -126,6 +126,15 @@ def create_app(config_name):
             return jsonify({"Questions": row}), 200
         return jsonify({"Questions": "No questions found"}), 404
 
+    @app.route("/api/v2/question/<question_id>", methods=["GET"])
+    def get_a_question_by_id(question_id):
+        query = 'SELECT * FROM questions WHERE question_id=%s;'
+        cursor = db_connection.cursor()
+        cursor.execute(query, (question_id,))
+        row = cursor.fetchone()
+        if row:
+            return jsonify({"Question": row}), 200
+        return jsonify({"Questions": "Not question found"}), 404
 
 
                 

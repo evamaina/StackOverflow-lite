@@ -20,8 +20,7 @@ class TestUserFunctinality(unittest.TestCase):
                      "email": "testEvet@gmail.com",
                      "password": "evet123"
                      }
-    # def tearDown(self):
-    #     db_connection.drop_tables()
+    
 
     def test_user_can_signup(self):
         """
