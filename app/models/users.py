@@ -35,25 +35,25 @@ class User(object):
             token = jwt.encode(
                 paylod, current_app.config['SECRET_KEY']
             )
-            return encoded_token
+            return token 
 
         except Exception as e:
             return e
 
     @staticmethod
-    def decodetoken():
+    def decodetoken(token):
         '''decodes the token'''
         try:
             paylod = jwt.decode(
-                token_auth, current_app.config['SECRET_KEY'])
-            token_blacklisted = BlacklistToken.verify_token(token_auth)
+                token, current_app.config['SECRET_KEY'])
+            token_blacklisted = Tokens.verify_token(token)
             if token_blacklisted:
                 return 'Invalid token please login'
             return paylod['sub']
         except jwt.ExpiredSignatureError:
             return 'Token expired'
         except jwt.InvalidTokenError:
-            return 'This oken is invalid'
+            return 'This token is invalid'
 
 class Tokens():
     def __init__(self, token):
@@ -65,7 +65,7 @@ class Tokens():
         '''
         query = 'SELECT token FROM tokens WHERE token =%s'
         cursor = db_connection.cursor()
-        cursor.execute(query, (str(auth_token),))
+        cursor.execute(query, (str(token),))
         blacklisted_token = cursor.fetchone()
         if blacklisted_token:
             return True
