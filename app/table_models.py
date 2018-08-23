@@ -14,8 +14,9 @@ def create_table():
                 question_id SERIAL PRIMARY KEY,\
                 title VARCHAR(70),\
                 content VARCHAR(200),\
-                user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE\
-                )',
+                user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE,\
+                posted_date TIMESTAMP)',
+
         'CREATE TABLE IF NOT EXISTS answers (\
                 answer_id SERIAL PRIMARY KEY,\
                 answer_body VARCHAR(200),\

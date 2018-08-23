@@ -42,3 +42,13 @@ def validate_user_email(json):
         return jsonify({'Message':
                         'Enter a valid email'}), 400
     return True
+
+def validate_question(json):
+    if not(json["title"].strip()):
+            return jsonify({'Message':
+                            'Title is required'}), 400
+    if not(json["content"].strip()):
+        return jsonify({'Message':
+                        'Content is required'}), 400
+
+    return True
