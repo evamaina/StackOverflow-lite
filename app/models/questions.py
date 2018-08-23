@@ -14,6 +14,5 @@ class Question(object):
         querry = 'INSERT INTO questions (title,content,user_id,posted_date) VALUES (%s,%s,%s,%s)'
 
         cursor = db_connection.cursor()
-        cursor.execute(querry,(self.title,self.content,self.user_id,\
-                               self.posted_date))
+        cursor.execute(querry,(self.title,self.content,self.user_id,self.posted_date))
         db_connection.commit()

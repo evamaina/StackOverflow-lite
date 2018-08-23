@@ -21,6 +21,7 @@ def create_table():
                 answer_id SERIAL PRIMARY KEY,\
                 answer_body VARCHAR(200),\
                 question_id INTEGER REFERENCES questions (question_id) ON DELETE CASCADE,\
+                user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE,\
                 posted_date TIMESTAMP\
                 )',
                      
