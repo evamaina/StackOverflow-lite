@@ -7,7 +7,6 @@ from app.models.answers import Answer
 from app.models.users import User
 from app.common.validation import *
 from app.manage import Database
-from app.common.authentication import jwt_required
 
 db_connection = Database()
 
@@ -46,7 +45,7 @@ def create_app(config_name):
         user_id = cursor.fetchone()
         token = User.token_generator(user_id)   
         return jsonify({'Message':
-                        "User successfully created","token": token.decode()}), 201
+                        "User successfully created","token": str(token)}), 201
 
     
 
@@ -60,18 +59,12 @@ def create_app(config_name):
         cursor.execute(query, (username,password))
         row = cursor.fetchone()
         if row:
-            query = "SELECT  user_id FROM users WHERE username=%s"
-            row = cursor.execute(query, (username,))
-            user_id = cursor.fetchone()
-            token = User.token_generator(user_id) 
-            return jsonify({"message": "User logged \
-                          in successfully", "token":token.decode()}), 200
+            return jsonify({"message": "User logged in successfully"}), 200
         return jsonify({"message": "Enter correct username or password"}), 401
 
 
     @app.route("/api/v2/question", methods=["POST"])
-    @jwt_required
-    def post_question(user_id):
+    def post_question(user_id=1):
         request_data = request.get_json()
         title = request_data["title"]
         content = request_data["content"]
@@ -90,34 +83,5 @@ def create_app(config_name):
             return jsonify({'Message': 'Question posted'}), 200
         return jsonify({"message": "Question already asked"}), 409
 
-    
-    @app.route("/api/v1/questions/<question_id>/answers", methods=["POST"])
-    @jwt_required
-    def add_answer(question_id, user_id):
-        request_data = request.get_json()
-        answer_body = request_data["answer_body"]
-        posted_date = datetime.now()
-        validate_answer_msg = validate_answer(request_data)
-        if(validate_answer_msg != True):
-            return validate_answer_msg
-
-        answer = Answer(answer_body, int(question_id),user_id, posted_date)
-        query = 'SELECT question_id FROM questions WHERE question_id=%s;'
-        query1 = 'SELECT answer_body FROM answers WHERE answer_body=%s;'
-        cursor = db_connection.cursor()
-        cursor.execute(query, (question_id,))
-        row = cursor.fetchall()
-        if row:
-            cursor.execute(query1, (answer_body,))
-            row1 = cursor.fetchall()
-            if row1:
-                return jsonify({"message": "answer already exist"}), 409
-            answer.save_answer()
-            return jsonify({"Message": "Answer added successfully"}), 200
-        return jsonify({"message": "Question does not exist"}), 400
-
-                
     db_connection.create_tables()
     return app
-
-        

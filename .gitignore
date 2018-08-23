@@ -4,4 +4,3 @@ venv/
 *.pyc
 *_pycache_/
 .coverage
-tests/__pycache__/

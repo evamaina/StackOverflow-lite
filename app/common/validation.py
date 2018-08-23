@@ -52,10 +52,3 @@ def validate_question(json):
                         'Content is required'}), 400
 
     return True
-
-def validate_answer(json):
-    
-    if not(json["answer_body"].strip()):
-        return jsonify({'Message':
-                        'Answer body is required'}), 400
-    return True
