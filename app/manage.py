@@ -9,7 +9,7 @@ DATABASE_URL = os.environ['DATABASE_URL']
 class Database():
     '''constructor to set up database'''
     def __init__(self):
-        self.connnecion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        self.connecion = psycopg2.connect(DATABASE_URL, sslmode='require')
 
     def create_tables(self):
         cur = self.connection.cursor()
