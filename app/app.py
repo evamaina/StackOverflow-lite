@@ -17,6 +17,10 @@ def create_app(config_name):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(app_config[config_name])
 
+    @app.route("/", methods=["GET"])
+    def index():
+        return jsonify({'Welcome to home page'})
+
     @app.route("/api/v2/signup", methods=["POST"])
     def register_new_user():
         request_data = request.get_json()
