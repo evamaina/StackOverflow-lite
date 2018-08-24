@@ -3,16 +3,13 @@ import os
 from app.table_models import create_table
 from psycopg2.extras import RealDictCursor
 
+DATABASE_URL = os.environ['DATABASE_URL']
+
+
 class Database():
     '''constructor to set up database'''
     def __init__(self):
-        self.database = os.getenv('DATABASE')
-        self.user = os.getenv('USER')
-        self.password = os.getenv('PASSWORD') 
-        self.host = os.getenv('HOST')
-        self.connection = psycopg2.connect(database=self.database, user=self.user,
-        	                               host=self.host,password=self.password)
-
+        self.connnecion = psycopg2.connect(DATABASE_URL, sslmode='require')
 
     def create_tables(self):
         cur = self.connection.cursor()
