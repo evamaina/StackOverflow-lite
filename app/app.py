@@ -68,7 +68,7 @@ def create_app(config_name):
                           in successfully", "token":token.decode()}), 200
         return jsonify({"message": "Enter correct username or password"}), 401
 
-
+    
     @app.route("/api/v2/question", methods=["POST"])
     @jwt_required
     def post_question(user_id):
@@ -80,7 +80,7 @@ def create_app(config_name):
 
         if(validate_question_msg != True):
             return validate_question_msg
-        question = Question(user_id,title,content,posted_date)
+        question = Question(user_id['user_id'],title,content,posted_date)
         query = 'SELECT title FROM questions WHERE title=%s'
         cursor = db_connection.cursor()
         cursor.execute(query, (title,))
@@ -101,7 +101,7 @@ def create_app(config_name):
         if(validate_answer_msg != True):
             return validate_answer_msg
 
-        answer = Answer(answer_body, int(question_id), posted_date,user_id)
+        answer = Answer(answer_body, int(question_id), posted_date,user_id['user_id'])
         query = 'SELECT question_id FROM questions WHERE question_id=%s;'
         query1 = 'SELECT answer_body FROM answers WHERE answer_body=%s;'
         cursor = db_connection.cursor()
@@ -129,12 +129,36 @@ def create_app(config_name):
     @app.route("/api/v2/question/<question_id>", methods=["GET"])
     def get_a_question_by_id(question_id):
         query = 'SELECT * FROM questions WHERE question_id=%s;'
+        query1 = 'SELECT * FROM answers WHERE question_id=%s;'
+        cursor = db_connection.cursor()
+        cursor.execute(query, (question_id,))
+        row = cursor.fetchone()
+        cursor.execute(query1, (question_id,))
+        row1 = cursor.fetchall()
+        if row1:
+            answers = row1
+        answers = row1
+        if row:
+            row['answers'] = answers
+            return jsonify({"Question": row}), 200
+        return jsonify({"Questions": "Not question found"}), 404
+
+    @app.route("/api/v2/question/<question_id>", methods=["DELETE"])
+    @jwt_required
+    def delete_question(question_id, user_id):
+        query = 'SELECT * FROM questions WHERE question_id=%s;'
+        query1 = 'DELETE FROM questions WHERE question_id=%s;'
+        
         cursor = db_connection.cursor()
         cursor.execute(query, (question_id,))
         row = cursor.fetchone()
         if row:
-            return jsonify({"Question": row}), 200
-        return jsonify({"Questions": "Not question found"}), 404
+            cursor.execute(query1, (question_id,))
+            db_connection.commit()
+            return jsonify({"Question":"Question delete successfully" }), 200
+        return jsonify({"Questions": "No question found"}), 404
+       
+
 
 
                 

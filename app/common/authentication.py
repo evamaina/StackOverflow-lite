@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request
+from flask import request, jsonify
 from app.models.users import User
 def jwt_required(f):
    
@@ -7,6 +7,8 @@ def jwt_required(f):
     def decorator(*args, **kwargs):
         '''fetches token from header and decodes it'''
         auth_header = request.headers.get('Authorization')
+        if auth_header is None:
+            return jsonify({'message':'provide token please'})
         auth_token = auth_header.split("Bearer ")[1]
         if auth_token:
             user_id = User.decodetoken(auth_token)
