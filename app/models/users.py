@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from app.manage import Database
 from flask import current_app
 import jwt
+from werkzeug.security import generate_password_hash
 db_connection = Database()
 class User(object):
 
@@ -10,7 +11,7 @@ class User(object):
         self.last_name = last_name
         self.username = username
         self.email = email
-        self.password = password
+        self.password = generate_password_hash(password)
         
     def save_user(self):
         querry = 'INSERT INTO users (first_name, last_name,username,\

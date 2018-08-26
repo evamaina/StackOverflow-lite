@@ -8,7 +8,7 @@ from app.models.users import User
 from app.common.validation import *
 from app.manage import Database
 from app.common.authentication import jwt_required
-
+from werkzeug.security import check_password_hash
 db_connection = Database()
 
 
@@ -25,6 +25,8 @@ def create_app(config_name):
         username = request_data["username"]
         email = request_data["email"]
         password = request_data["password"]
+        confirm_password= request_data["confirm_password"]
+
 
         validate_email_exist_msg = validate_email_exist(email)
         if(validate_email_exist_msg == True):
@@ -38,6 +40,8 @@ def create_app(config_name):
         valid_email = validate_user_email(request_data)
         if(valid_email != True):
             return valid_email
+        if password != confirm_password:
+            return jsonify({"Message":"Password mismatch"})
         user = User(first_name,last_name,username,email,password)
         user.save_user()
         query = "SELECT  user_id FROM users WHERE email=%s"
@@ -55,18 +59,20 @@ def create_app(config_name):
         request_data = request.get_json()
         username = request_data["username"]
         password = request_data["password"]
-        query = "SELECT * FROM users WHERE username=%s AND password=%s;"
+        query = "SELECT username, password FROM users WHERE username=%s;"
         cursor = db_connection.cursor()
-        cursor.execute(query, (username,password))
+        cursor.execute(query,(username,))
         row = cursor.fetchone()
         if row:
-            query = "SELECT  user_id FROM users WHERE username=%s"
-            row = cursor.execute(query, (username,))
-            user_id = cursor.fetchone()
-            token = User.token_generator(user_id) 
-            return jsonify({"message": "User logged \
-                          in successfully", "token":token.decode()}), 200
-        return jsonify({"message": "Enter correct username or password"}), 401
+            if check_password_hash(row['password'], password):
+                query = "SELECT  user_id FROM users WHERE username=%s"
+                row = cursor.execute(query, (username,))
+                user_id = cursor.fetchone()
+                token = User.token_generator(user_id) 
+                return jsonify({"message": "User logged \
+                              in successfully", "token":token.decode()}), 200
+            return jsonify('wrong password, eneter correct password'),401
+        return jsonify({"message": "Enter correct username"}), 401
 
     
     @app.route("/api/v2/question", methods=["POST"])
@@ -146,10 +152,17 @@ def create_app(config_name):
     @app.route("/api/v2/question/<question_id>", methods=["DELETE"])
     @jwt_required
     def delete_question(question_id, user_id):
+        cursor = db_connection.cursor()
+        query2 = 'SELECT user_id from questions WHERE question_id=%s'
+        cursor.execute(query2, question_id)
+        row2 = cursor.fetchone()
+        if not row2:
+            return jsonify('question does not exist')
+        if row2['user_id'] != user_id['user_id']:
+            return jsonify({"Message":"you cant delete this"})
         query = 'SELECT * FROM questions WHERE question_id=%s;'
         query1 = 'DELETE FROM questions WHERE question_id=%s;'
-        
-        cursor = db_connection.cursor()
+    
         cursor.execute(query, (question_id,))
         row = cursor.fetchone()
         if row:
@@ -157,11 +170,32 @@ def create_app(config_name):
             db_connection.commit()
             return jsonify({"Question":"Question delete successfully" }), 200
         return jsonify({"Questions": "No question found"}), 404
-       
 
-
-
-                
+    @app.route("/api/v2/question/<question_id>/answers/<answer_id>", methods=["PUT"])
+    @jwt_required
+    def accept_or_update_answer(question_id, answer_id, user_id):
+        ''''''
+        query = "SELECT * FROM questions WHERE question_id=%s"
+        query1 ="SELECT * FROM answers WHERE answer_id = %s"
+        cursor = db_connection.cursor()
+        cursor.execute(query, question_id)
+        row = cursor.fetchone()
+        if row:
+            if row['user_id'] == user_id['user_id']:
+                query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
+                cursor.execute(query3, question_id)
+                db_connection.commit()
+                return jsonify({"Message":"answer accepted"})
+            cursor.execute(query1, answer_id)
+            row1 = cursor.fetchone()
+            if not row1:
+                return jsonify({"message":"no answer"}),404
+            answer_body = request.json.get("answer_body")
+            if row1['user_id'] == user_id['user_id']:
+                cursor.execute('UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
+                db_connection.commit()
+            return jsonify({"Message":"answer updated"})
+        return  jsonify('question not found')          
     db_connection.create_tables()
     return app
 

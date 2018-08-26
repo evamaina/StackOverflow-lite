@@ -7,7 +7,7 @@ def create_table():
                 last_name VARCHAR(30),\
                 username VARCHAR(30),\
                 email VARCHAR(90),\
-                password VARCHAR(90)\
+                password VARCHAR(255)\
                 )',
     
         'CREATE TABLE IF NOT EXISTS questions (\
@@ -22,6 +22,7 @@ def create_table():
                 answer_body VARCHAR(200),\
                 question_id INTEGER REFERENCES questions (question_id) ON DELETE CASCADE,\
                 posted_date TIMESTAMP,\
+                accepted BOOLEAN DEFAULT false,\
                 user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE)',
                      
       
