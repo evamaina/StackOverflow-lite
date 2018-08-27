@@ -115,6 +115,17 @@ class TestQuestionFunctinality(unittest.TestCase):
         """
         Tests a user can post a question.
         """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="Evet",
+                                                         last_name="testlastnam",
+                                                         username="sername",
+                                                         email="ev@gkjklmail.com",
+                                                         password="eve",
+                                                         confirm_password="eve")),
+                                    content_type="application/json")
+        
+        signup_data = json.loads(response.data)
+        assert signup_data == 'eve'
 
         response = self.client.post("/api/v2/question",
                                  data=json.dumps(dict(title="sdgetr git branch",

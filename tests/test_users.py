@@ -6,6 +6,7 @@ db_connection = Database()
 from app.app import create_app
 from app.models.users import User
 
+
 class TestUserFunctinality(unittest.TestCase):
     """This class represents the user test case"""
 
@@ -20,9 +21,25 @@ class TestUserFunctinality(unittest.TestCase):
                      "email": "testEvet@gmail.com",
                      "password": "evet123"
                      }
-    
+
+    """ Test for user registration """
 
     def test_user_can_signup(self):
+        with self.client:
+            response = self.client.post('/api/v2/signup',
+                                        data=json.dumps(dict(first_name="eva",
+                                                             last_name="main",
+                                                             username="evezpnbjret",
+                                                             email="evarenmbbtpm@gmail.com",
+                                                             password="evet123",
+                                                             confirm_password="evet123")),
+                                        content_type='application/json')
+            data = json.loads(response.data.decode('UTF-8'))
+            # import pdb;pdb.set_trace()
+            self.assertTrue(data['Message'] == "User successfully created")
+            self.assertEqual(response.content_type, 'application/json')
+            self.assertEqual(response.status_code, 201)
+
         """
         Test new user can be registered to the system.
         """
@@ -39,10 +56,11 @@ class TestUserFunctinality(unittest.TestCase):
         """
         response = self.client.post("/api/v2/signup",
                                     data=json.dumps(dict(first_name="",
-                                                         last_name="testlastnam",
-                                                         username="testusername",
-                                                         email="testEvet@gmail.com",
-                                                         password="testpassword")),
+                                                         last_name="tnam",
+                                                         username="name",
+                                                         email="hjg@gmail.com",
+                                                         password="evet",
+                                                         confirm_password="evet")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -54,11 +72,12 @@ class TestUserFunctinality(unittest.TestCase):
         Test user cannot enter blank last name.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="Eva",
+                                    data=json.dumps(dict(first_name="james",
                                                          last_name="",
-                                                         username="testusername",
-                                                         email="testEvet@gmail.com",
-                                                         password="testpassword")),
+                                                         username="tom",
+                                                         email="pwd@gmail.com",
+                                                         password="pwd",
+                                                         confirm_password="pwd")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -70,11 +89,12 @@ class TestUserFunctinality(unittest.TestCase):
         Test user cannot enter blank password.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="Eva",
-                                                         last_name="testlastnam",
-                                                         username="testusername",
-                                                         email="testEvet@gmail.com",
-                                                         password="")),
+                                    data=json.dumps(dict(first_name="beat",
+                                                         last_name="betty",
+                                                         username="betz",
+                                                         email="betz@gmail.com",
+                                                         password="",
+                                                         confirm_password="")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -86,11 +106,12 @@ class TestUserFunctinality(unittest.TestCase):
         Test user cannot enter blank last name.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="Eva",
-                                                         last_name="test",
+                                    data=json.dumps(dict(first_name="john",
+                                                         last_name="doe",
                                                          username="",
-                                                         email="asgf@gmail.com",
-                                                         password="evvv")),
+                                                         email="doe@gmail.com",
+                                                         password="jdoe",
+                                                         confirm_password="jdoe")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -102,18 +123,20 @@ class TestUserFunctinality(unittest.TestCase):
         Test new user already exist in the system to the system.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="eve",
-                                                         last_name="maina",
-                                                         username="eva",
-                                                         email="ev@gmail.com",
-                                                         password="evt")),
+                                    data=json.dumps(dict(first_name="juliet",
+                                                         last_name="smith",
+                                                         username="jsmith",
+                                                         email="smith@gmail.com",
+                                                         password="smith23",
+                                                         confirm_password="smith23")),
                                     content_type="application/json")
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="eve",
-                                                         last_name="maina",
-                                                         username="ev",
-                                                         email="ev@gmail.com",
-                                                         password="evt")),
+                                    data=json.dumps(dict(first_name="juliet",
+                                                         last_name="smith",
+                                                         username="jsmith",
+                                                         email="smith@gmail.com",
+                                                         password="smith23",
+                                                         confirm_password="smith23")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 409)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -125,18 +148,20 @@ class TestUserFunctinality(unittest.TestCase):
         Test new user already exist in the system to the system.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="evej",
-                                                         last_name="mainaj",
-                                                         username="evajjj",
-                                                         email="evjj@mail.com",
-                                                         password="evjt")),
+                                    data=json.dumps(dict(first_name="peter",
+                                                         last_name="will",
+                                                         username="pwil",
+                                                         email="ptw@mail.com",
+                                                         password="ptt",
+                                                         confirm_password="ptt")),
                                     content_type="application/json")
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="evej",
-                                                         last_name="mainaj",
-                                                         username="evajjj",
-                                                         email="evjjj@mail.com",
-                                                         password="evjt")),
+                                    data=json.dumps(dict(first_name="peter",
+                                                         last_name="will",
+                                                         username="pwil",
+                                                         email="pt@mail.com",
+                                                         password="ptt",
+                                                         confirm_password="ptt")),
                                     content_type="application/json")
         self.assertEqual(response.status_code, 409)
         response_msg = json.loads(response.data.decode("UTF-8"))
@@ -149,11 +174,12 @@ class TestUserFunctinality(unittest.TestCase):
         """
         response = self.client.post("/api/v2/signup",
                                     data=json.dumps(dict(first_name="eve",
-                                                         last_name="testlastnam",
-                                                         username="testusername",
+                                                         last_name="lastnam",
+                                                         username="tusername",
                                                          email="testEmail",
-                                                         password="testpassword")),
-                                    content_type="application/json")
+                                                         password="mmmm",
+                                                         confirm_password="mmmm"),
+                                    content_type="application/json"))
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Enter a valid email",
@@ -168,9 +194,10 @@ class TestUserFunctinality(unittest.TestCase):
                                                          last_name="mfgh",
                                                          username="testuser",
                                                          email="testEvvt@gmail.com",
-                                                         password="")),
+                                                         password="",
+                                                         confirm_password="")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Password is required",
                          response_msg["Message"])
@@ -194,7 +221,8 @@ class TestUserFunctinality(unittest.TestCase):
                                                          last_name="maina",
                                                          username="johnson",
                                                          email="evajohnson@gmail.com",
-                                                         password="evaj")),
+                                                         password="evaj",
+                                                         confirm_password="evaj")),
                                     content_type="application/json")
         response = self.client.post("/api/v2/login",
                                     data=json.dumps(dict(
@@ -215,7 +243,8 @@ class TestUserFunctinality(unittest.TestCase):
                                                          last_name="maina",
                                                          username="eve",
                                                          email="ev@gmail.com",
-                                                         password="evaj")),
+                                                         password="evaj",
+                                                         confirm_password="evaj")),
                                     content_type="application/json")
         response = self.client.post("/api/v2/login",
                                     data=json.dumps(dict(
@@ -224,11 +253,8 @@ class TestUserFunctinality(unittest.TestCase):
                                     content_type="application/json")
         self.assertEqual(response.status_code, 401)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Enter correct username or password",
+        self.assertEqual("Enter correct username",
                          response_msg["message"])
 
-    
 
-    
-    
-    
+
