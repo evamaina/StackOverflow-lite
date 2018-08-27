@@ -10,7 +10,7 @@ install:
 env:
   DATABASE='test_stackoverflowlite'
   USER=postgres
-  PASSSWORD=stack123
+  PASSSWORD=""
   HOST=localhost
 
 script: pytest --cov=app
