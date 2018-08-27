@@ -19,8 +19,8 @@ class TestAnswerFunctinality(unittest.TestCase):
                      }
         self.answer = {"answer_body":"wertghdfggdggdg"
                      }
-    def tearDown(self):
-      db.db_connection.drop_tables()
+    # def tearDown(self):
+    #   db.db_connection.drop_tables()
 
 
     def test_user_can_post_answer(self):

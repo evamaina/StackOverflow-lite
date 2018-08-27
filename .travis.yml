@@ -7,7 +7,20 @@ install:
   - "pip install -r requirements.txt"
   - "pip install coveralls"
 
+env:
+  DATABASE='test_stackoverflowlite'
+  USER=postgres
+  PASSSWORD=stack123
+  HOST=localhost
+
 script: pytest --cov=app
 
 after_success:
 - coveralls 
+
+services:
+  -postgresql
+
+before_script:
+  -psql -c 'create database stackoverflow;' -U postgres
+  -psql -c 'create database test_stackoverflow;' -U postgres

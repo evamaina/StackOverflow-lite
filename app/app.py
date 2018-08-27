@@ -42,7 +42,7 @@ def create_app(config_name):
             return valid_email
         if password != confirm_password:
             return jsonify({"Message":"Password mismatch"})
-        user = User(first_name,last_name,username,email,password)
+        user = User(first_name,last_name,username,email,password,confirm_password)
         user.save_user()
         query = "SELECT  user_id FROM users WHERE email=%s"
         cursor = db_connection.cursor()
@@ -50,7 +50,7 @@ def create_app(config_name):
         user_id = cursor.fetchone()
         token = User.token_generator(user_id)   
         return jsonify({'Message':
-                        "User successfully created","token": token.decode()}), 201
+                        "User successfully created"}), 201
 
     
 
