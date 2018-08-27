@@ -29,12 +29,13 @@ class TestUserFunctinality(unittest.TestCase):
             response = self.client.post('/api/v2/signup',
                                         data=json.dumps(dict(first_name="eva",
                                                              last_name="main",
-                                                             username="evepnbjret",
-                                                             email="evarenbtpm@gmail.com",
+                                                             username="evezpnbjret",
+                                                             email="evarenmbbtpm@gmail.com",
                                                              password="evet123",
                                                              confirm_password="evet123")),
                                         content_type='application/json')
             data = json.loads(response.data.decode('UTF-8'))
+            # import pdb;pdb.set_trace()
             self.assertTrue(data['Message'] == "User successfully created")
             self.assertEqual(response.content_type, 'application/json')
             self.assertEqual(response.status_code, 201)
