@@ -1,21 +1,21 @@
 from flask import Flask, request, jsonify
 from validate_email import validate_email
 from datetime import datetime
-from config import app_config
 from app.models.questions import Question
 from app.models.answers import Answer
 from app.models.users import User
 from app.common.validation import *
 from app.manage import Database
+from config import CONFIG
 from app.common.authentication import jwt_required
 from werkzeug.security import check_password_hash
 db_connection = Database()
 
 
-def create_app(config_name):
+def create_app(config):
 
     app = Flask(__name__, instance_relative_config=True)
-    app.config.from_object(app_config[config_name])
+    app.config.from_object(CONFIG[config])
 
     @app.route("/api/v2/signup", methods=["POST"])
     def register_new_user():
@@ -48,7 +48,7 @@ def create_app(config_name):
         cursor = db_connection.cursor()
         row = cursor.execute(query, (email,))
         user_id = cursor.fetchone()
-        token = User.token_generator(user_id)   
+        # token = User.token_generator(user_id)   
         return jsonify({'Message':
                         "User successfully created"}), 201
 
@@ -195,8 +195,27 @@ def create_app(config_name):
                 cursor.execute('UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
                 db_connection.commit()
             return jsonify({"Message":"answer updated"})
-        return  jsonify('question not found')          
+        return  jsonify('question not found')
+
+    @app.route("/api/v2/question/user_id", methods=["GET"])
+    def fetch_all_questions_for_specific_user(user_id):
+        query ='SELECT * FROM questions WHERE user_id=%s'
+        cursor = db_connection.cursor()
+        cursor.execute(query,[user_id])
+        row = cursor.fetchall()
+        if row:
+            return jsonify({"Questions": row}), 200
+        return jsonify({"Questions": "No questions found"}), 404
+
+    # @app.route("/api/v2/question/question_id/answers/answer_id", methods=["GET"])
+    # def view_questions_with_most_answers(question_id,answer_id):
+        
+        
+    
+
+
     db_connection.create_tables()
     return app
 
         
+      
