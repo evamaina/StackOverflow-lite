@@ -197,18 +197,9 @@ def create_app(config):
             return jsonify({"Message":"answer updated"})
         return  jsonify('question not found')
 
-    @app.route("/api/v2/question/user_id", methods=["GET"])
-    def fetch_all_questions_for_specific_user(user_id):
-        query ='SELECT * FROM questions WHERE user_id=%s'
-        cursor = db_connection.cursor()
-        cursor.execute(query,[user_id])
-        row = cursor.fetchall()
-        if row:
-            return jsonify({"Questions": row}), 200
-        return jsonify({"Questions": "No questions found"}), 404
+   
 
-    # @app.route("/api/v2/question/question_id/answers/answer_id", methods=["GET"])
-    # def view_questions_with_most_answers(question_id,answer_id):
+   
         
         
     

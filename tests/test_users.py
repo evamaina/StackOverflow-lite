@@ -42,6 +42,23 @@ class TestUserFunctinality(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("User successfully created",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
                          response_msg["Message"])
     
 
