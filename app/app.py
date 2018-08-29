@@ -19,7 +19,7 @@ def create_app(config):
 
     @app.route("/", methods=["GET"])
     @app.route("/api/v2", methods=["GET"])
-    def index:
+    def index():
         return jsonify({"Message":"Welcome to home page"})
 
     @app.route("/api/v2/signup", methods=["POST"])
