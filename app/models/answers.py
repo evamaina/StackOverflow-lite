@@ -1,6 +1,6 @@
 from datetime import datetime
-from app.manage import Database
-db_connection = Database()
+from app.manage import conn, cur
+
 
 class Answer(object):
 
@@ -13,9 +13,8 @@ class Answer(object):
     def save_answer(self):
         querry = 'INSERT INTO answers(answer_body,question_id, posted_date,user_id) VALUES (%s,%s,%s,%s)'
 
-        cursor = db_connection.cursor()
-        cursor.execute(querry,(self.answer_body,self.question_id, self.posted_date,self.user_id))
-        db_connection.commit()
+        cur.execute(querry,(self.answer_body,self.question_id, self.posted_date,self.user_id))
+        conn.commit()
 
 
         

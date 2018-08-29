@@ -10,20 +10,13 @@ class Config(object):
 class DevelopmentConfig(Config):
     """setting environment variables for the database."""
     SECRET_KEY ="thisismeevet"
-    os.environ['DATABASE'] = 'stackoverflow'
-    os.environ['USER'] = 'stack'
-    os.environ['PASSWORD'] = 'stack123'
-    os.environ['HOST'] = 'localhost'
     DEBUG = True
 
 class TestingConfig(Config):
     """Configurations for Testing."""
-    os.environ['DATABASE'] = 'test_stackoverflow'
-    os.environ['USER'] = 'stack'
-    os.environ['PASSWORD'] = 'stack123'
-    os.environ['HOST'] = 'localhost'
     TESTING = True
     DEBUG = True
+    SECRET_KEY ="thisismeevet"
 
 class StagingConfig(Config):
     """Configurations for Staging."""
@@ -34,7 +27,7 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
 
-app_config = {
+CONFIG = {
     'development': DevelopmentConfig,
     'testing': TestingConfig,
     'staging': StagingConfig,

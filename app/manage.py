@@ -3,52 +3,45 @@ import os
 from app.table_models import create_table
 from psycopg2.extras import RealDictCursor
 
-class Database():
-    '''constructor to set up database'''
-    def __init__(self):
-        self.database = os.getenv('DATABASE')
-        self.user = os.getenv('USER')
-        self.password = os.getenv('PASSWORD') 
-        self.host = os.getenv('HOST')
-        self.connection = psycopg2.connect(database=self.database, user=self.user,
-        	                               host=self.host,password=self.password)
 
+if os.getenv('CONFIG') == 'development':
+    conn_string = os.getenv("DATABASE")
+elif os.getenv('CONFIG') == 'testing':
+    conn_string = os.getenv("TEST_DATABASE")
 
-    def create_tables(self):
-        cur = self.connection.cursor()
-        for table in create_table():
+conn = psycopg2.connect(conn_string)
+cur = conn.cursor(cursor_factory=RealDictCursor)
+
+def create_tables():
+    for table in create_table():
+        cur.execute(table)
+        conn.commit()
+        print('table created  successfully')
+        
+    return 'tables created'
+  
+
+def drop_tables():
+    
+    drop_users = "DROP TABLE IF EXISTS users CASCADE"
+
+    drop_questions = "DROP TABLE IF EXISTS questions CASCADE"
+
+    drop_answers = "DROP TABLE IF EXISTS answers CASCADE"
+
+    drop_token = "DROP TABLE IF EXISTS token"
+
+    table_list= [drop_users , drop_questions , drop_answers, drop_token]
+        
+    try:
+        
+        for table in table_list:
+            
             cur.execute(table)
-            self.connection.commit()
-            print('table created  successfully')
-            
-        return 'tables created'
-      
-
-    def drop_tables(self):
-        ''' deletes the existing tables from the database'''
-        query = (
-        	'DROP TABLE IF EXISTS users CASCADE;',
-            'DROP TABLE IF EXISTS questions CASCADE;',
-            'DROP TABLE IF EXISTS answers CASCADE;',
-            'DROP TABLE IF EXISTS tokens;'
-        )
         
-        cur = self.connection.cursor()
-        for drop_table in query:
-            cur.execute(drop_table)
-            print('table dropped')
-            self.commit()
-        
-            
-        return 'tables dropped successfully'
+        # commit and  changes
+            conn.commit()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
-    def cursor(self):
-        '''cursor method for executing queries'''
-        cur = self.connection.cursor(cursor_factory=RealDictCursor)
-        return cur
-    
-    def commit(self):
-        '''save changes to db'''
-        self.connection.commit()
 
-    
