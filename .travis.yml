@@ -1,6 +1,8 @@
 language: python
 python:
   - "3.6"
+services:
+  -postgresql
 
 install:
   - "pip install pytest"
@@ -8,18 +10,17 @@ install:
   - "pip install coveralls"
 
 env:
-  TEST_DATABASE="postgresql://stack:stack123@localhost/test_stackoverflow"
-  DATABASE="postgresql://stack:stack123@localhost/stackoverflow"
+  TEST_DATABASE="postgresql://postgres:''@127.0.0.1/test_stackoverflow"
+  DATABASE="postgresql://postgres:''@127.0.0.1/stackoverflow"
   CONFIG=testing
+
+before_script:
+  - psql -c 'create database stackoverflow;' -U postgres
+  - psql -c 'create database test_stackoverflow;' -U postgres
 
 script: pytest --cov=app
 
 after_success:
 - coveralls 
 
-services:
-  -postgresql
 
-before_script:
-  - psql -c 'create database stackoverflow;' -U postgres
-  - psql -c 'create database test_stackoverflow;' -U postgres
