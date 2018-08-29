@@ -1,7 +1,6 @@
 from app.app import *
 from validate_email import validate_email
-from app.manage import Database
-db_connection = Database()
+from app.manage import conn, cur
 
 def validate_user_registration(json):
     if not(json["first_name"].strip()):
@@ -21,7 +20,6 @@ def validate_user_registration(json):
 
 def validate_email_exist(email):
     query= "SELECT * FROM users WHERE email='{}'".format(email)
-    cur = db_connection.cursor()
     cur.execute(query)
     row = cur.fetchone()
     if row:
@@ -30,7 +28,6 @@ def validate_email_exist(email):
 
 def validate_username_exist(username):
     query= "SELECT * FROM users WHERE username='{}'".format(username)
-    cur = db_connection.cursor()
     cur.execute(query)
     row = cur.fetchone()
     if row:

@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
-from app.manage import Database
+from app.manage import conn, cur
 from flask import current_app
 import jwt
 from werkzeug.security import generate_password_hash
-db_connection = Database()
+
 class User(object):
 
     def __init__(self,first_name,last_name,username, email, password,confirm_password):
@@ -18,10 +18,9 @@ class User(object):
         querry = 'INSERT INTO users (first_name, last_name,username,\
                               email, password) VALUES (%s,%s,%s,%s,%s)'
 
-        cursor = db_connection.cursor()
-        cursor.execute(querry,(self.first_name,self.last_name,self.username,\
+        cur.execute(querry,(self.first_name,self.last_name,self.username,\
                                self.email,self.password))
-        db_connection.commit()
+        conn.commit()
 
     @staticmethod
     def token_generator(user_id):
@@ -66,18 +65,17 @@ class Tokens():
         '''query db to  check if token exist
         '''
         query = 'SELECT token FROM tokens WHERE token =%s'
-        cursor = db_connection.cursor()
-        cursor.execute(query, (str(token),))
-        blacklisted_token = cursor.fetchone()
+        cur.execute(query, (str(token),))
+        blacklisted_token = cur.fetchone()
         if blacklisted_token:
             return True
         return False
 
     def save_token(self, token):
         ''' persit token '''
-        cursor = db_connection.cursor()
+
         query = 'INSERT INTO tokens (token) VALUES (%s)'
-        cursor.execute(query, (token,))
-        db_connection.commit()
+        cur.execute(query, (token,))
+        conn.commit()
 
 

@@ -1,7 +1,7 @@
 import unittest
 import os
 import json
-from app.app import db_connection
+from app.manage import drop_tables, create_tables
 from app.app import create_app
 from app.models.answers import Answer
 
@@ -9,18 +9,15 @@ from app.models.answers import Answer
 class TestAnswerFunctinality(unittest.TestCase):
     """This class represents the Answer test case"""
 
+                     
     def setUp(self):
         """Define test variables and initialize app."""
-        self.app = create_app(config_name="testing")
-        db_connection.create_tables()
+        create_tables()
+        self.app = create_app('testing')
         self.client = self.app.test_client()
-        self.question = {"title": "No module found error",
-                         "content": "What is the correct way to fix this ImportError error?"
-                     }
-        self.answer = {"answer_body":"wertghdfggdggdg"
-                     }
-    # def tearDown(self):
-    #   db.db_connection.drop_tables()
+       
+    def tearDown(self):
+        drop_tables()
 
 
     def test_user_can_post_answer(self):
@@ -32,16 +29,18 @@ class TestAnswerFunctinality(unittest.TestCase):
                                                          last_name="krir",
                                                          username="jkorry",
                                                          email="jy@gmal.com",
-                                                         password="jy")),
+                                                         password="jy",
+                                                         confirm_password="jy")),
                                     content_type="application/json")
 
         response = self.client.post("/api/v2/login",
                                     data=json.dumps(dict(
-                                        username_or_email="jkorry",
+                                        username="jkorry",
                                         password="jy")),
                                     content_type="application/json")
 
         response = self.client.post("/api/v2/question",
+        							headers={"Authorization":"Bearer %s" % (response.json['token'])},
                                     data=json.dumps(self.question),
                                     content_type="application/json")
         response = self.client.post("/api/v2/questions/1/answers",
@@ -58,7 +57,7 @@ class TestAnswerFunctinality(unittest.TestCase):
         response = self.client.post("/api/v2/questions/1/answers",
                                  data=json.dumps(dict(answer_body=" ")),
                                  content_type="application/json")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Answer body is required",
                       response_msg["Message"])
@@ -98,12 +97,12 @@ class TestAnswerFunctinality(unittest.TestCase):
 
     def test_user_must_be_registered_to_answer_question(self):
         
-        response = self.client.post("/api/v2/questions/1/answers",
-                                    data=json.dumps(self.answer),
-                                    content_type="application/json")
+        response = self.client.post("/api/v2/questions/12/answers",
+                                 data=json.dumps(dict(answer_body=" cvdfg gbnhj")),
+                                 content_type="application/json")
         self.assertEqual(response.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertIn("User does not exist", response_msg["message"])
+        self.assertEqual("Question does not exist", response_msg["message"])
    
    
 
@@ -138,3 +137,9 @@ class TestAnswerFunctinality(unittest.TestCase):
         response_msg = json.loads(response.data.decode("UTF-8"))
         self.assertEqual("Question with that id not found",
                       response_msg["Message"])
+
+
+
+
+
+ 
