@@ -198,36 +198,81 @@ class TestUserFunctinality(unittest.TestCase):
                                                          password="evaj",
                                                          confirm_password="evaj")),
                                     content_type="application/json")
-        response_login = self.client.post("/api/v2/login",
-                                          data=json.dumps(dict(
-                                              username="johnson",
-                                              password="evaj")),
-                                          content_type="application/json",
-                                          )
+        response1 = self.client.post("/api/v2/login",
+                                     data=json.dumps(dict(
+                                         username="johnson",
+                                         password="evaj")),
+                                     content_type="application/json",)
 
-        self.assertEqual(response_login.status_code, 200)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("User logged in successfully",
-                         response_msg["message"])
+
+        self.assertEqual(response1.status_code, 200)
+        
 
     def test_user_login_with_wrong_password(self):
         """
         Test new user cannot login with wrong credentials.
         """
         response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="evawer",
+                                    data=json.dumps(dict(first_name="eva",
                                                          last_name="maina",
-                                                         username="eve",
-                                                         email="ev@gmail.com",
+                                                         username="johnson",
+                                                         email="evajohnson@gmail.com",
                                                          password="evaj",
                                                          confirm_password="evaj")),
                                     content_type="application/json")
-        response = self.client.post("/api/v2/login",
-                                    data=json.dumps(dict(
-                                        username="eve",
-                                        password="evaj")),
+        response1 = self.client.post("/api/v2/login",
+                                     data=json.dumps(dict(
+                                         username="johnson",
+                                         password="evajj")),
+                                     content_type="application/json",)
+
+        
+        self.assertEqual(response1.status_code, 401)
+
+    def test_user_login_with_wrong_username(self):
+        """
+        Test new user cannot login with wrong credentials.
+        """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="eva",
+                                                         last_name="maina",
+                                                         username="johnson",
+                                                         email="evajohnson@gmail.com",
+                                                         password="evaj",
+                                                         confirm_password="evaj")),
                                     content_type="application/json")
-        self.assertEqual(response.status_code, 401)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-        self.assertEqual("Enter correct username",
-                         response_msg["message"])
+        response1 = self.client.post("/api/v2/login",
+                                     data=json.dumps(dict(
+                                         username="eve",
+                                         password="evaj")),
+                                     content_type="application/json",)
+
+        
+        self.assertEqual(response1.status_code, 401)
+
+    def test_user_can_logout(self):
+        """
+        Test new user can login to the system.
+        """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="eva",
+                                                         last_name="maina",
+                                                         username="johnson",
+                                                         email="evajohnson@gmail.com",
+                                                         password="evaj",
+                                                         confirm_password="evaj")),
+                                    content_type="application/json")
+        response1 = self.client.post("/api/v2/login",
+                                     data=json.dumps(dict(
+                                         username="johnson",
+                                         password="evaj")),
+                                     content_type="application/json",)
+        response3 = self.client.post("/api/v2/logout",
+                                     data=json.dumps(dict(
+                                         username="johnson",
+                                         password="evaj")),
+                                     content_type="application/json",)
+
+
+        self.assertEqual(response1.status_code, 200)
+        

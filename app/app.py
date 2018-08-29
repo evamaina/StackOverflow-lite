@@ -69,8 +69,8 @@ def create_app(config):
                 token = User.token_generator(user_id)
                 print(token) 
                 return jsonify({"message": "User logged \
-                              in successfully", "token":str(token)}), 200
-            return jsonify('wrong password, eneter correct password'),401
+                              in successfully", "token":token.decode("UTF-8")}), 200
+            return jsonify('wrong password, enter correct password'),401
         return jsonify({"message": "Enter correct username"}), 401
 
     
@@ -181,6 +181,16 @@ def create_app(config):
             return jsonify({"Message":"Question delete successfully" }), 200
         return jsonify({"Message": "No question found"}), 404
 
+    @app.route("/api/v2/question/user_id", methods=["GET"])
+    def fetch_all_questions_for_specific_user(user_id):
+        query ='SELECT * FROM questions WHERE user_id=%s'
+        cursor = db_connection.cursor()
+        cursor.execute(query,user_id)
+        row = cursor.fetchall()
+        if row:
+            return jsonify({"Questions": row}), 200
+        return jsonify({"Questions": "No questions found"}), 404
+        
     @app.route("/api/v2/question/<question_id>/answers/<answer_id>", methods=["PUT"])
     @jwt_required
     def accept_or_update_answer(question_id, answer_id, user_id):
