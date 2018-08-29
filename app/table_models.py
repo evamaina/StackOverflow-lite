@@ -6,7 +6,7 @@ def create_table():
                 first_name VARCHAR(30),\
                 last_name VARCHAR(30),\
                 username VARCHAR(30),\
-                email VARCHAR(90),\
+                email VARCHAR(255),\
                 password VARCHAR(255)\
                 )',
     
