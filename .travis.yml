@@ -10,9 +10,9 @@ install:
   - "pip install coveralls"
 
 env:
-  TEST_DATABASE="postgresql://postgres:''@127.0.0.1/test_stackoverflow"
+  TEST_DATABASE="dbname='test_stackoverflow' host='127.0.0.1' port='5432' user='postgres' password='' "
   DATABASE="postgresql://postgres:''@127.0.0.1/stackoverflow"
-  CONFIG=testing
+  CONFIG="testing"
 
 before_script:
   - psql -c 'create database stackoverflow;' -U postgres
