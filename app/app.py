@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from validate_email import validate_email
 from datetime import datetime
 from app.models.questions import Question
 from app.models.answers import Answer

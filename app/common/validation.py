@@ -1,6 +1,6 @@
 from app.app import *
-from validate_email import validate_email
 from app.manage import conn, cur
+import re
 
 def validate_user_registration(json):
     if not(json["first_name"].strip()):
@@ -35,9 +35,10 @@ def validate_username_exist(username):
     return False
 
 def validate_user_email(json):
-    if not(validate_email(json["email"])):
-        return jsonify({'Message':
-                        'Enter a valid email'}), 400
+   
+    if not re.match(r'^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$',
+                    json["email"]):
+                return jsonify({"Message":"Enter a valid email"}),400
     return True
 
 def validate_question(json):
