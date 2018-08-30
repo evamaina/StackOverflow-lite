@@ -32,7 +32,7 @@ StackOverflow-lite is a platform where people can ask questions and provide answ
 #### Post answer to a question
 ![answer-quest](https://image.ibb.co/htf6Cp/post_answer.png)
 #### Delete a question
-![delete-quest](https://image.ibb.co/eHhBTU/delete.png)
+![delete-quest](https://image.ibb.co/bxfnJU/delete.png)
 #### Fetch all questions
 ![fetch-all-quest](https://image.ibb.co/jaBck9/fetch_all_quest.png)
 #### Fetch a single question
