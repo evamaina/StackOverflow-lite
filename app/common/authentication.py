@@ -21,5 +21,7 @@ def jwt_required(f):
                 return jsonify(response), 401
         else:
             return False
-        return f(user_id)
+        return f(user_id=user_id, *args, **kwargs)
     return decorator
+
+    
