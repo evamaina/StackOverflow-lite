@@ -9,7 +9,9 @@ if os.getenv('CONFIG') == 'development':
 elif os.getenv('CONFIG') == 'testing':
     conn_string = os.getenv("TEST_DATABASE")
 
+'''opening a connection to our database'''
 conn = psycopg2.connect(conn_string)
+'''creating a cursor'''
 cur = conn.cursor(cursor_factory=RealDictCursor)
 
 def create_tables():

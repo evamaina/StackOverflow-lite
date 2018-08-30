@@ -190,10 +190,10 @@ def create_app(config):
     @app.route("/api/v2/question/user_id", methods=["GET"])
     def fetch_all_questions_for_specific_user(user_id):
         query ='SELECT * FROM questions WHERE user_id=%s'
-        cursor = db_connection.cursor()
-        cursor.execute(query,user_id)
+        cursor=cur.execute(query,user_id)
         row = cursor.fetchall()
         if row:
+            print(row._dict_)
             return jsonify({"Questions": row}), 200
         return jsonify({"Questions": "No questions found"}), 404
         
