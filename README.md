@@ -17,7 +17,7 @@ StackOverflow-lite is a platform where people can ask questions and provide answ
 | /api/v2/question/id | Fetch a question by id | GET |
 | /api/v2/question/question_id | Delete a question | DELETE |
 | /api/v1/answer/questionId | Post an answer | POST|
-| /api/v2/users/question/user_id | Fetch all questions for a user | POST|
+| /api/v2/users/question/ | Fetch all questions for a user | POST|
 | /api/v2/question/question_id/answers/answer_id | Mark answer as accepted or update answer | PUT |
 
 ## Screenshots
@@ -41,6 +41,8 @@ StackOverflow-lite is a platform where people can ask questions and provide answ
 ![update-answer](https://image.ibb.co/cNwKyU/update.png)
 #### Mark answer as accepted
 ![accept-answer](https://image.ibb.co/mKoJQ9/accept.png)
+#### Fetch all questions for the current user
+![fetch-all](https://image.ibb.co/fv86dU/fetch_specific.png)
 
 
 
