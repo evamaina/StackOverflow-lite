@@ -187,13 +187,16 @@ def create_app(config):
             return jsonify({"Message":"Question delete successfully" }), 200
         return jsonify({"Message": "No question found"}), 404
 
-    @app.route("/api/v2/question/user_id", methods=["GET"])
+    @app.route("/api/v2/users/question/<int:user_id>", methods=["GET"])
+    @jwt_required
     def fetch_all_questions_for_specific_user(user_id):
+        # query1 = 'SELECT * FROM questions'
         query ='SELECT * FROM questions WHERE user_id=%s'
-        cursor=cur.execute(query,user_id)
+
+        cursor=cur.execute(query,str(user_id['user_id']))
         row = cursor.fetchall()
+        print(row)
         if row:
-            print(row._dict_)
             return jsonify({"Questions": row}), 200
         return jsonify({"Questions": "No questions found"}), 404
         

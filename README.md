@@ -5,19 +5,45 @@
 
 ## StackOverflow-lite
 StackOverflow-lite is a platform where people can ask questions and provide answers
-## Endpoints
+## Challenge 3 Endpoints
 
 | Endpoint       | Description          |   HTTP-verb  |
 | ------------- |:-------------:| -----:| 
-| /api/v1/register | Register new user | POST |
-| /api/v1/login  | Login the user using this endpoint      | POST   |
-| /api/v1/logout | Logout the user from the system      | POST   |
-| /api/v1/users | Get all users |  GET |
-| /api/v1/question | Post a question | POST|
-| /api/v1/question/id | Get question by id | GET |
-| /api/v1/questions | Get all questions | GET |
+| /api/v2/signup | Register new user | POST |
+| /api/v2/login  | Login the user using this endpoint      | POST   |
+| /api/v2/logout | Logout the user from the system      | POST   |
+| /api/v2/questions | Fetch all questions |  GET |
+| /api/v2/question | Post a question | POST|
+| /api/v2/question/id | Fetch a question by id | GET |
+| /api/v2/question/question_id | Delete a question | DELETE |
 | /api/v1/answer/questionId | Post an answer | POST|
-| /api/v1//answers/questionId | Get all answers for a question | GET |
+| /api/v2/users/question/user_id | Fetch all questions for a user | POST|
+| /api/v2/question/question_id/answers/answer_id | Mark answer as accepted or update answer | PUT |
+
+## Screenshots
+#### SignUp user 
+![signup](https://image.ibb.co/cnboa9/user_sign.png)
+#### Login user
+![login](https://image.ibb.co/cypKyU/login_user.png)
+#### Logout user
+![logout](https://image.ibb.co/gnsNJU/logout.png)
+#### Post question
+![post-quest](https://image.ibb.co/b6VCk9/post_quest.png)
+#### Post answer to a question
+![answer-quest](https://image.ibb.co/htf6Cp/post_answer.png)
+#### Delete a question
+![delete-quest](https://image.ibb.co/eHhBTU/delete.png)
+#### Fetch all questions
+![fetch-all-quest](https://image.ibb.co/jaBck9/fetch_all_quest.png)
+#### Fetch a single question
+![fetch-a-quest](https://image.ibb.co/dbBosp/fetch_a_quest.png)
+#### Update an answer
+![update-answer](https://image.ibb.co/cNwKyU/update.png)
+#### Mark answer as accepted
+![accept-answer](https://image.ibb.co/mKoJQ9/accept.png)
+
+
+
 
 
 ## Getting Started
