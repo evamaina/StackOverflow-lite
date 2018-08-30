@@ -3,9 +3,10 @@ import os
 from app.table_models import create_table
 from psycopg2.extras import RealDictCursor
 
-
+'''environment variables for development'''
 if os.getenv('CONFIG') == 'development':
     conn_string = os.getenv("DATABASE")
+    '''environment variables for testing'''
 elif os.getenv('CONFIG') == 'testing':
     conn_string = os.getenv("TEST_DATABASE")
 
@@ -41,7 +42,7 @@ def drop_tables():
             
             cur.execute(table)
         
-        # commit and  changes
+            ''' commit and save changes'''
             conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)

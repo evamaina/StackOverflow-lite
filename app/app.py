@@ -10,12 +10,13 @@ from app.common.authentication import jwt_required
 from werkzeug.security import check_password_hash
 
 
+
+
 def create_app(config):
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(CONFIG[config])
     app.url_map.strict_slashes = False
-
     @app.route("/", methods=["GET"])
     @app.route("/api/v2", methods=["GET"])
     def index():
@@ -23,15 +24,21 @@ def create_app(config):
 
     @app.route("/api/v2/signup", methods=["POST"])
     def register_new_user():
-        request_data = request.get_json()
+        try:
+            request_data = request.get_json()
+        except Exception as e:
+            response = {
+                'status': 'error',
+                'message': 'Error: {}'.format(e)
+            }
+            return jsonify(response), 400
+
         first_name = request_data["first_name"]
         last_name = request_data["last_name"]
         username = request_data["username"]
         email = request_data["email"]
         password = request_data["password"]
         confirm_password= request_data["confirm_password"]
-
-
         validate_email_exist_msg = validate_email_exist(email)
         if(validate_email_exist_msg == True):
             return jsonify({'Message':'user with this email address exist'}),409    
@@ -50,17 +57,23 @@ def create_app(config):
         user.save_user()
         query = "SELECT  user_id FROM users WHERE email=%s"
         row = cur.execute(query, (email,))
-        user_id = cur.fetchone()
-        # token = User.token_generator(user_id)   
+        user_id = cur.fetchone()  
         return jsonify({'Message':
-                        "User successfully created"}), 201
-
-
-    
+                            "User successfully created"}), 201
+        
+ 
 
     @app.route("/api/v2/login", methods=["POST"])
     def login_user():
-        request_data = request.get_json()
+        try:
+            request_data = request.get_json()
+        except Exception as e:
+            response = {
+                'status': 'error',
+                'message': 'Error: {}'.format(e)
+            }
+            return jsonify(response), 400
+
         username = request_data["username"]
         password = request_data["password"]
         query = "SELECT username, password FROM users WHERE username=%s;"
@@ -98,7 +111,14 @@ def create_app(config):
     @app.route("/api/v2/question", methods=["POST"])
     @jwt_required
     def post_question(user_id):
-        request_data = request.get_json()
+        try:
+            request_data = request.get_json()
+        except Exception as e:
+            response = {
+                'status': 'error',
+                'message': 'Error: {}'.format(e)
+            }
+            return jsonify(response), 400
         title = request_data["title"]
         content = request_data["content"]
         posted_date = datetime.now()
@@ -119,7 +139,14 @@ def create_app(config):
     @app.route("/api/v2/questions/<question_id>/answers", methods=["POST"])
     @jwt_required
     def add_answer(question_id, user_id):
-        request_data = request.get_json()
+        try:
+            request_data = request.get_json()
+        except Exception as e:
+            response = {
+                'status': 'error',
+                'message': 'Error: {}'.format(e)
+            }
+            return jsonify(response), 400
         answer_body = request_data["answer_body"]
         posted_date = datetime.now()
         validate_answer_msg = validate_answer(request_data)
@@ -186,13 +213,13 @@ def create_app(config):
             return jsonify({"Message":"Question delete successfully" }), 200
         return jsonify({"Message": "No question found"}), 404
 
-    @app.route("/api/v2/users/question/<int:user_id>", methods=["GET"])
+    @app.route("/api/v2/question/<int:_id>", methods=["GET"])
     @jwt_required
-    def fetch_all_questions_for_specific_user(user_id):
-        # query1 = 'SELECT * FROM questions'
-        query ='SELECT * FROM questions WHERE user_id=%s'
-
-        cursor=cur.execute(query,str(user_id['user_id']))
+    def fetch_all_questions_for_specific_user(_id):
+        query1 = 'SELECT * FROM questions WHERE user_id = 9'
+        print(_id)
+        cursor=cur.execute(query1)
+        print(cursor)
         row = cursor.fetchall()
         print(row)
         if row:
