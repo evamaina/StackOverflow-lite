@@ -212,9 +212,9 @@ def create_app(config):
 
     @app.route("/api/v2/question/", methods=["GET"])
     @jwt_required
-    def fetch_all_questions_for_specific_user(_id):
+    def fetch_all_questions_for_specific_user(user_id):
         query1 = 'SELECT * FROM questions WHERE user_id=%s'
-        usr = (_id['user_id'],)
+        usr = (user_id['user_id'],)
         cur.execute(query1, usr)
         row = cur.fetchall()
         if row:

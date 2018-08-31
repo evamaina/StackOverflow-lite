@@ -32,7 +32,7 @@ def drop_tables():
 
     drop_answers = "DROP TABLE IF EXISTS answers CASCADE"
 
-    drop_token = "DROP TABLE IF EXISTS token"
+    drop_token = "DROP TABLE IF EXISTS tokens"
 
     table_list= [drop_users , drop_questions , drop_answers, drop_token]
         
