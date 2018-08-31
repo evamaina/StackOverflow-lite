@@ -10,17 +10,16 @@ from app.common.authentication import jwt_required
 from werkzeug.security import check_password_hash
 
 
-
-
 def create_app(config):
 
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_object(CONFIG[config])
     app.url_map.strict_slashes = False
+
     @app.route("/", methods=["GET"])
     @app.route("/api/v2", methods=["GET"])
     def index():
-        return jsonify({"Message":"Welcome to home page"})
+        return jsonify({"Message": "Welcome to home page"})
 
     @app.route("/api/v2/signup", methods=["POST"])
     def register_new_user():
@@ -38,13 +37,13 @@ def create_app(config):
         username = request_data["username"]
         email = request_data["email"]
         password = request_data["password"]
-        confirm_password= request_data["confirm_password"]
+        confirm_password = request_data["confirm_password"]
         validate_email_exist_msg = validate_email_exist(email)
         if(validate_email_exist_msg == True):
-            return jsonify({'Message':'user with this email address exist'}),409    
+            return jsonify({'Message': 'user with this email address exist'}), 409
         validate_username_exist_msg = validate_username_exist(username)
         if(validate_username_exist_msg == True):
-            return jsonify({"Message":"user with this username already exist"}),409
+            return jsonify({"Message": "user with this username already exist"}), 409
         validate_user_msg = validate_user_registration(request_data)
         if(validate_user_msg != True):
             return validate_user_msg
@@ -52,16 +51,15 @@ def create_app(config):
         if(valid_email != True):
             return valid_email
         if password != confirm_password:
-            return jsonify({"Message":"Password mismatch"})
-        user = User(first_name,last_name,username,email,password,confirm_password)
+            return jsonify({"Message": "Password mismatch"})
+        user = User(first_name, last_name, username,
+                    email, password, confirm_password)
         user.save_user()
         query = "SELECT  user_id FROM users WHERE email=%s"
         row = cur.execute(query, (email,))
-        user_id = cur.fetchone()  
+        user_id = cur.fetchone()
         return jsonify({'Message':
-                            "User successfully created"}), 201
-        
- 
+                        "User successfully created"}), 201
 
     @app.route("/api/v2/login", methods=["POST"])
     def login_user():
@@ -77,7 +75,7 @@ def create_app(config):
         username = request_data["username"]
         password = request_data["password"]
         query = "SELECT username, password FROM users WHERE username=%s;"
-        cur.execute(query,(username,))
+        cur.execute(query, (username,))
         row = cur.fetchone()
         if row:
             if check_password_hash(row['password'], password):
@@ -85,13 +83,12 @@ def create_app(config):
                 row = cur.execute(query, (username,))
                 user_id = cur.fetchone()
                 token = User.token_generator(user_id)
-                print(token) 
+                print(token)
                 return jsonify({"message": "User logged \
-                              in successfully", "token":token.decode("UTF-8")}), 200
-            return jsonify('wrong password, enter correct password'),401
+                              in successfully", "token": token.decode("UTF-8")}), 200
+            return jsonify('wrong password, enter correct password'), 401
         return jsonify({"message": "Enter correct username"}), 401
 
-    
     @app.route("/api/v2/logout", methods=['POST'])
     @jwt_required
     def logout(user_id):
@@ -126,7 +123,7 @@ def create_app(config):
 
         if(validate_question_msg != True):
             return validate_question_msg
-        question = Question(user_id['user_id'],title,content,posted_date)
+        question = Question(user_id['user_id'], title, content, posted_date)
         query = 'SELECT title FROM questions WHERE title=%s'
         cur.execute(query, (title,))
         row = cur.fetchone()
@@ -135,7 +132,6 @@ def create_app(config):
             return jsonify({'Message': 'Question posted'}), 201
         return jsonify({"Message": "Question already asked"}), 409
 
-    
     @app.route("/api/v2/questions/<question_id>/answers", methods=["POST"])
     @jwt_required
     def add_answer(question_id, user_id):
@@ -153,7 +149,8 @@ def create_app(config):
         if(validate_answer_msg != True):
             return validate_answer_msg
 
-        answer = Answer(answer_body, int(question_id), posted_date,user_id['user_id'])
+        answer = Answer(answer_body, int(question_id),
+                        posted_date, user_id['user_id'])
         query = 'SELECT question_id FROM questions WHERE question_id=%s;'
         query1 = 'SELECT answer_body FROM answers WHERE answer_body=%s;'
         cur.execute(query, (question_id,))
@@ -169,7 +166,7 @@ def create_app(config):
 
     @app.route("/api/v2/questions", methods=["GET"])
     def fetch_all_questions():
-        query ='SELECT * FROM questions'
+        query = 'SELECT * FROM questions'
         cur.execute(query)
         row = cur.fetchall()
         if row:
@@ -201,16 +198,16 @@ def create_app(config):
         if not row2:
             return jsonify('question does not exist')
         if row2['user_id'] != user_id['user_id']:
-            return jsonify({"Message":"you cant delete this"})
+            return jsonify({"Message": "you cant delete this"})
         query = 'SELECT * FROM questions WHERE question_id=%s;'
         query1 = 'DELETE FROM questions WHERE question_id=%s;'
-    
+
         cur.execute(query, (question_id,))
         row = cur.fetchone()
         if row:
             cur.execute(query1, (question_id,))
             conn.commit()
-            return jsonify({"Message":"Question delete successfully" }), 200
+            return jsonify({"Message": "Question delete successfully"}), 200
         return jsonify({"Message": "No question found"}), 404
 
     @app.route("/api/v2/question/", methods=["GET"])
@@ -223,13 +220,13 @@ def create_app(config):
         if row:
             return jsonify({"Questions": row}), 200
         return jsonify({"Questions": "No questions found"}), 404
-        
+
     @app.route("/api/v2/question/<question_id>/answers/<answer_id>", methods=["PUT"])
     @jwt_required
     def accept_or_update_answer(question_id, answer_id, user_id):
         ''''''
         query = "SELECT * FROM questions WHERE question_id=%s"
-        query1 ="SELECT * FROM answers WHERE answer_id = %s"
+        query1 = "SELECT * FROM answers WHERE answer_id = %s"
         cur.execute(query, question_id)
         row = cur.fetchone()
         if row:
@@ -237,24 +234,17 @@ def create_app(config):
                 query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
                 cur.execute(query3, question_id)
                 conn.commit()
-                return jsonify({"Message":"answer accepted"})
+                return jsonify({"Message": "answer accepted"})
             cur.execute(query1, answer_id)
             row1 = cur.fetchone()
             if not row1:
-                return jsonify({"message":"no answer"}),404
+                return jsonify({"message": "no answer"}), 404
             answer_body = request.json.get("answer_body")
             if row1['user_id'] == user_id['user_id']:
-                cur.execute('UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
+                cur.execute(
+                    'UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
                 conn.commit()
-            return jsonify({"Message":"answer updated"})
-        return  jsonify('question not found')
-
-    
-    
-
-
+            return jsonify({"Message": "answer updated"}), 200
+        return jsonify('question not found'), 404
 
     return app
-
-        
-      

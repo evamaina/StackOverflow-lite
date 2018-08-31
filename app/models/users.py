@@ -28,7 +28,7 @@ class User(object):
         '''method which generates token for users'''
         try:
             paylod = {
-                'exp': datetime.utcnow() + timedelta(minutes=100),
+                'exp': datetime.utcnow() + timedelta(minutes=300),
                 'iat': datetime.utcnow(),
                 'sub': user_id
 

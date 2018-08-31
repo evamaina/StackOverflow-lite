@@ -47,9 +47,7 @@ class TestQuestionFunctinality(unittest.TestCase):
                                                           content="asdgfh ndgts nbv")),
                                      content_type="application/json",
                                      headers={'Authorization': 'Bearer ' + token})
-        # print("*" * 10)
-        # print(response.json)
-        # print("*" * 10)
+        
         self.assertEqual(response2.status_code, 201)
 
     def test_post_question_empty_content(self):
@@ -145,8 +143,8 @@ class TestQuestionFunctinality(unittest.TestCase):
                                      content_type="application/json",
                                      headers={'Authorization': 'Bearer ' + token})
         response3 = self.client.get("/api/v2/questions",
-                                   data=json.dumps(dict()),
-                                   content_type="application/json")
+                                    data=json.dumps(dict()),
+                                    content_type="application/json")
         self.assertEqual(response3.status_code, 200)
         response_msg = json.loads(response.data.decode("UTF-8"))
 
@@ -182,7 +180,6 @@ class TestQuestionFunctinality(unittest.TestCase):
                                    data=json.dumps(dict(question_id=1)),
                                    content_type="application/json")
         self.assertEqual(response.status_code, 200)
-        
 
     def test_user_can_not_get_question_by_id_that_does_not_exist(self):
 
@@ -213,11 +210,11 @@ class TestQuestionFunctinality(unittest.TestCase):
         token = decoded_response['token']
 
         response2 = self.client.post("/api/v2/question",
-                                    data=json.dumps(dict(
-                                        title="import error bgfnhg",
-                                        content="nbghtfrd jhgty")),
-                                    content_type="application/json",
-                                    headers={'Authorization': 'Bearer ' + token})
+                                     data=json.dumps(dict(
+                                         title="import error bgfnhg",
+                                         content="nbghtfrd jhgty")),
+                                     content_type="application/json",
+                                     headers={'Authorization': 'Bearer ' + token})
         response3 = self.client.post("/api/v2/question",
                                      data=json.dumps(dict(
                                          title="import error bgfnhg",
@@ -225,8 +222,6 @@ class TestQuestionFunctinality(unittest.TestCase):
                                      content_type="application/json",
                                      headers={'Authorization': 'Bearer ' + token})
         self.assertEqual(response3.status_code, 409)
-       
-    
 
     def test_question_can_be_deleted(self):
         """
@@ -256,10 +251,7 @@ class TestQuestionFunctinality(unittest.TestCase):
                          content_type="application/json",
                          headers={'Authorization': 'Bearer ' + token})
         response3 = self.client.delete("/api/v2/question/1",
-                                      data=json.dumps(dict(question_id=1)),
-                                      content_type="application/json",
-                                      headers={'Authorization': 'Bearer ' + token})
+                                       data=json.dumps(dict(question_id=1)),
+                                       content_type="application/json",
+                                       headers={'Authorization': 'Bearer ' + token})
         self.assertEqual(response3.status_code, 200)
-       
-
-    

@@ -102,6 +102,23 @@ class TestUserFunctinality(unittest.TestCase):
         self.assertEqual("Username is required",
                          response_msg["Message"])
 
+    def test__invalid_username(self):
+        """
+        Test user cannot enter blank last name.
+        """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="john",
+                                                         last_name="doe",
+                                                         username=",",
+                                                         email="doe@gmail.com",
+                                                         password="jdoe",
+                                                         confirm_password="jdoe")),
+                                    content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+        response_msg = json.loads(response.data.decode("UTF-8"))
+        self.assertEqual("Enter a valid username",
+                         response_msg["Message"])
+
     def test_user_email_exists(self):
         """
         Test new user already exist in the system to the system.
@@ -204,9 +221,7 @@ class TestUserFunctinality(unittest.TestCase):
                                          password="evaj")),
                                      content_type="application/json",)
 
-
         self.assertEqual(response1.status_code, 200)
-        
 
     def test_user_login_with_wrong_password(self):
         """
@@ -226,7 +241,6 @@ class TestUserFunctinality(unittest.TestCase):
                                          password="evajj")),
                                      content_type="application/json",)
 
-        
         self.assertEqual(response1.status_code, 401)
 
     def test_user_login_with_wrong_username(self):
@@ -247,7 +261,6 @@ class TestUserFunctinality(unittest.TestCase):
                                          password="evaj")),
                                      content_type="application/json",)
 
-        
         self.assertEqual(response1.status_code, 401)
 
     def test_user_can_logout(self):
@@ -273,6 +286,24 @@ class TestUserFunctinality(unittest.TestCase):
                                          password="evaj")),
                                      content_type="application/json",)
 
+        self.assertEqual(response1.status_code, 200)
+
+    def test_user_can_login(self):
+        """
+        Test new user can login to the system.
+        """
+        response = self.client.post("/api/v2/signup",
+                                    data=json.dumps(dict(first_name="eva",
+                                                         last_name="maina",
+                                                         username="johnson",
+                                                         email="evajohnson@gmail.com",
+                                                         password="evaj",
+                                                         confirm_password="evaj")),
+                                    content_type="application/json")
+        response1 = self.client.post("/api/v2/login",
+                                     data=json.dumps(dict(
+                                         username="johnson",
+                                         password="evaj")),
+                                     content_type="application/json",)
 
         self.assertEqual(response1.status_code, 200)
-        
