@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from datetime import datetime
 from app.models.questions import Question
 from app.models.answers import Answer
@@ -13,13 +14,14 @@ from werkzeug.security import check_password_hash
 def create_app(config):
 
     app = Flask(__name__, instance_relative_config=True)
+    CORS(app)
     app.config.from_object(CONFIG[config])
     app.url_map.strict_slashes = False
 
     @app.route("/", methods=["GET"])
     @app.route("/api/v2", methods=["GET"])
     def index():
-        return jsonify({"Message": "Welcome to home page"})
+       return jsonify({"Message": "Welcome to home page"})
 
     @app.route("/api/v2/signup", methods=["POST"])
     def register_new_user():
