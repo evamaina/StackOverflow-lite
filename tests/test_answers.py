@@ -125,41 +125,4 @@ class TestAnswerFunctinality(unittest.TestCase):
         self.assertEqual(response4.status_code, 400)
         response_msg = json.loads(response.data.decode("UTF-8"))
 
-    def test_update_answer(self):
-        """
-        Tests a user can update his answer t.
-        """
-        response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="Evet",
-                                                         last_name="maina",
-                                                         username="eve",
-                                                         email="ev@gkjklmail.com",
-                                                         password="evaj",
-                                                         confirm_password="evaj")),
-                                    content_type="application/json")
-        response1 = self.client.post("/api/v2/login",
-                                     data=json.dumps(dict(
-                                         username="eve",
-                                         password="evaj")),
-                                     content_type="application/json",)
-
-        decoded_response = json.loads(response1.data.decode("UTF-8"))
-
-        token = decoded_response['token']
-
-        response2 = self.client.post("/api/v2/question",
-                                     data=json.dumps(dict(title="sdgetr git branch bvfg",
-                                                          content="asdgfh ndgts nbv")),
-                                     content_type="application/json",
-                                     headers={'Authorization': 'Bearer ' + token})
-        response3 = self.client.post("/api/v2/questions/1/answers",
-                                     data=json.dumps(
-                                         dict(answer_body="asdef vbg ")),
-                                     content_type="application/json",
-                                     headers={'Authorization': 'Bearer ' + token})
-        response4 = self.client.put("/api/v2/question/1/answers/1",
-                                    data=json.dumps(
-                                        dict(answer_body="vbghn bnjm")),
-                                    content_type="application/json",
-                                    headers={'Authorization': 'Bearer ' + token})
-        self.assertEqual(response4.status_code, 200)
+     

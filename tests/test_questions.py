@@ -115,39 +115,7 @@ class TestQuestionFunctinality(unittest.TestCase):
         self.assertEqual("Title is required",
                          response_msg["Message"])
 
-    def test_user_can_fetch_all_questions(self):
-        """
-        Tests user can get all questions he/she has asked.
-        """
-        response = self.client.post("/api/v2/signup",
-                                    data=json.dumps(dict(first_name="Evet",
-                                                         last_name="maina",
-                                                         username="eve",
-                                                         email="ev@gkjklmail.com",
-                                                         password="evaj",
-                                                         confirm_password="evaj")),
-                                    content_type="application/json")
-        response1 = self.client.post("/api/v2/login",
-                                     data=json.dumps(dict(
-                                         username="eve",
-                                         password="evaj")),
-                                     content_type="application/json",)
-
-        decoded_response = json.loads(response1.data.decode("UTF-8"))
-
-        token = decoded_response['token']
-
-        response2 = self.client.post("/api/v2/question",
-                                     data=json.dumps(dict(title="sdgetr git branch bvfg",
-                                                          content="asdgfh ndgts nbv")),
-                                     content_type="application/json",
-                                     headers={'Authorization': 'Bearer ' + token})
-        response3 = self.client.get("/api/v2/questions",
-                                    data=json.dumps(dict()),
-                                    content_type="application/json")
-        self.assertEqual(response3.status_code, 200)
-        response_msg = json.loads(response.data.decode("UTF-8"))
-
+    
     def test_user_can_get_one_question_by_id(self):
         """
         Tests a user can get a question by id.

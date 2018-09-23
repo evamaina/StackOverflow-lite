@@ -12,14 +12,14 @@ def create_table():
     
         'CREATE TABLE IF NOT EXISTS questions (\
                 question_id SERIAL PRIMARY KEY,\
-                title VARCHAR(70),\
-                content VARCHAR(200),\
+                title VARCHAR(255),\
+                content VARCHAR(500),\
                 user_id INTEGER REFERENCES users (user_id) ON DELETE CASCADE,\
                 posted_date TIMESTAMP)',
 
         'CREATE TABLE IF NOT EXISTS answers (\
                 answer_id SERIAL PRIMARY KEY,\
-                answer_body VARCHAR(200),\
+                answer_body VARCHAR(500),\
                 question_id INTEGER REFERENCES questions (question_id) ON DELETE CASCADE,\
                 posted_date TIMESTAMP,\
                 accepted BOOLEAN DEFAULT false,\

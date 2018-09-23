@@ -53,7 +53,7 @@ def create_app(config):
         if(valid_email != True):
             return valid_email
         if password != confirm_password:
-            return jsonify({"Message": "Password mismatch"})
+            return jsonify({"Message": "Password mismatch"}), 401
         user = User(first_name, last_name, username,
                     email, password, confirm_password)
         user.save_user()
@@ -86,10 +86,10 @@ def create_app(config):
                 user_id = cur.fetchone()
                 token = User.token_generator(user_id)
                 print(token)
-                return jsonify({"message": "User logged \
+                return jsonify({"Message": "User logged \
                               in successfully", "token": token.decode("UTF-8")}), 200
-            return jsonify('wrong password, enter correct password'), 401
-        return jsonify({"message": "Enter correct username"}), 401
+            return jsonify({"Message":"wrong password, enter correct password"}), 401
+        return jsonify({"Message": "Enter correct username"}), 401
 
     @app.route("/api/v2/logout", methods=['POST'])
     @jwt_required
@@ -109,6 +109,7 @@ def create_app(config):
 
     @app.route("/api/v2/question", methods=["POST"])
     @jwt_required
+    # @cross_origin()
     def post_question(user_id):
         try:
             request_data = request.get_json()
@@ -130,8 +131,8 @@ def create_app(config):
         cur.execute(query, (title,))
         row = cur.fetchone()
         if not row:
-            question.save_question()
-            return jsonify({'Message': 'Question posted'}), 201
+            res=question.save_question()
+            return jsonify({'Message': 'Question posted','response':res}), 201
         return jsonify({"Message": "Question already asked"}), 409
 
     @app.route("/api/v2/questions/<question_id>/answers", methods=["POST"])
@@ -167,7 +168,8 @@ def create_app(config):
         return jsonify({"message": "Question does not exist"}), 400
 
     @app.route("/api/v2/questions", methods=["GET"])
-    def fetch_all_questions():
+    @jwt_required
+    def fetch_all_questions(user_id):
         query = 'SELECT * FROM questions'
         cur.execute(query)
         row = cur.fetchall()
@@ -194,24 +196,21 @@ def create_app(config):
     @app.route("/api/v2/question/<question_id>", methods=["DELETE"])
     @jwt_required
     def delete_question(question_id, user_id):
-        query2 = 'SELECT user_id from questions WHERE question_id=%s'
-        cur.execute(query2, question_id)
-        row2 = cur.fetchone()
-        if not row2:
-            return jsonify('question does not exist')
-        if row2['user_id'] != user_id['user_id']:
-            return jsonify({"Message": "you cant delete this"})
-        query = 'SELECT * FROM questions WHERE question_id=%s;'
-        query1 = 'DELETE FROM questions WHERE question_id=%s;'
-
-        cur.execute(query, (question_id,))
+        query = "SELECT * FROM questions WHERE question_id='{}';".format(question_id)
+        query1 = "DELETE FROM questions WHERE question_id='{}';".format(question_id)
+        query2 = "SELECT user_id from questions WHERE question_id='{}';".format(question_id)
+        cur.execute(query)
         row = cur.fetchone()
         if row:
-            cur.execute(query1, (question_id,))
-            conn.commit()
-            return jsonify({"Message": "Question delete successfully"}), 200
-        return jsonify({"Message": "No question found"}), 404
-
+           cur.execute(query2)
+           row2 = cur.fetchone()
+           if row2['user_id'] != user_id['user_id']:
+                return jsonify({"Message": "you cant delete this"}), 401
+           cur.execute(query1)
+           conn.commit()
+           return jsonify({"Message": "Question delete successfully"}), 200
+        return jsonify({"Message": "question does not exist"}), 404
+                
     @app.route("/api/v2/question/", methods=["GET"])
     @jwt_required
     def fetch_all_questions_for_specific_user(user_id):
@@ -223,20 +222,24 @@ def create_app(config):
             return jsonify({"Questions": row}), 200
         return jsonify({"Questions": "No questions found"}), 404
 
-    @app.route("/api/v2/question/<question_id>/answers/<answer_id>", methods=["PUT"])
+    @app.route("/api/v2/question/<question_id>/answers/<answer_id>/<action>", methods=["PUT"])
     @jwt_required
-    def accept_or_update_answer(question_id, answer_id, user_id):
+    def accept_or_update_answer(action, question_id, answer_id, user_id):
         ''''''
         query = "SELECT * FROM questions WHERE question_id=%s"
         query1 = "SELECT * FROM answers WHERE answer_id = %s"
-        cur.execute(query, question_id)
-        row = cur.fetchone()
-        if row:
-            if row['user_id'] == user_id['user_id']:
-                query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
-                cur.execute(query3, question_id)
-                conn.commit()
-                return jsonify({"Message": "answer accepted"})
+        if str(action).strip() == 'accept':
+            cur.execute(query, question_id)
+            row = cur.fetchone()
+            if row:
+                if row['user_id'] == user_id['user_id']:
+                    query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
+                    cur.execute(query3, question_id)
+                    conn.commit()
+                    return jsonify({"Message": "answer accepted"}), 200
+                return jsonify({
+                    "Message": "You are not allowed to perform this action"}), 401
+        if str(action).strip() == 'update':
             cur.execute(query1, answer_id)
             row1 = cur.fetchone()
             if not row1:
@@ -246,7 +249,9 @@ def create_app(config):
                 cur.execute(
                     'UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
                 conn.commit()
-            return jsonify({"Message": "answer updated"}), 200
+                return jsonify({"Message": "answer updated"}), 201
+            return jsonify({
+                    "Message": "You are not allowed to perform this action"}), 401
         return jsonify('question not found'), 404
 
     return app
