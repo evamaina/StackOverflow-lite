@@ -170,11 +170,26 @@ def create_app(config):
     @app.route("/api/v2/questions", methods=["GET"])
     @jwt_required
     def fetch_all_questions(user_id):
-        query = 'SELECT * FROM questions'
+        query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
+        u.username FROM questions q, users u WHERE u.user_id=q.user_id ORDER BY q.posted_date DESC"
         cur.execute(query)
         row = cur.fetchall()
         if row:
             return jsonify({"Questions": row}), 200
+        return jsonify({"Questions": "No questions found"}), 404
+
+    @app.route("/api/v2/recent-questions", methods=["GET"])
+    @jwt_required
+    def fetch_recent_questions(user_id):
+        # query1 = 'SELECT * FROM questions ORDER BY questions\
+        # .posted_date DESC LIMIT 5'
+        query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
+        u.username FROM questions q, users u WHERE u.user_id=q.user_id\
+        ORDER BY q.posted_date DESC LIMIT 5"
+        cur.execute(query)
+        row = cur.fetchall()
+        if row:
+            return jsonify({"Recently_asked":row}), 200
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>", methods=["GET"])
@@ -215,11 +230,16 @@ def create_app(config):
     @jwt_required
     def fetch_all_questions_for_specific_user(user_id):
         query1 = 'SELECT * FROM questions WHERE user_id=%s'
+        query2 = 'SELECT * FROM questions WHERE user_id=%s ORDER BY questions\
+        .posted_date DESC LIMIT 5'
         usr = (user_id['user_id'],)
         cur.execute(query1, usr)
         row = cur.fetchall()
         if row:
-            return jsonify({"Questions": row}), 200
+            cursor=cur
+            cursor.execute(query2, (usr,))
+            recent = cursor.fetchall()
+            return jsonify({"Questions": row, 'user_recent' : recent }), 200
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>/answers/<answer_id>/<action>", methods=["PUT"])
@@ -229,18 +249,18 @@ def create_app(config):
         query = "SELECT * FROM questions WHERE question_id=%s"
         query1 = "SELECT * FROM answers WHERE answer_id = %s"
         if str(action).strip() == 'accept':
-            cur.execute(query, question_id)
+            cur.execute(query, (question_id,))
             row = cur.fetchone()
             if row:
                 if row['user_id'] == user_id['user_id']:
                     query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
-                    cur.execute(query3, question_id)
+                    cur.execute(query3, (question_id,))
                     conn.commit()
                     return jsonify({"Message": "answer accepted"}), 200
                 return jsonify({
                     "Message": "You are not allowed to perform this action"}), 401
         if str(action).strip() == 'update':
-            cur.execute(query1, answer_id)
+            cur.execute(query1, (answer_id,))
             row1 = cur.fetchone()
             if not row1:
                 return jsonify({"message": "no answer"}), 404
