@@ -168,8 +168,7 @@ def create_app(config):
         return jsonify({"message": "Question does not exist"}), 400
 
     @app.route("/api/v2/questions", methods=["GET"])
-    @jwt_required
-    def fetch_all_questions(user_id):
+    def fetch_all_questions():
         query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
         u.username FROM questions q, users u WHERE u.user_id=q.user_id ORDER BY q.posted_date DESC"
         cur.execute(query)
@@ -179,8 +178,7 @@ def create_app(config):
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/recent-questions", methods=["GET"])
-    @jwt_required
-    def fetch_recent_questions(user_id):
+    def fetch_recent_questions():
         # query1 = 'SELECT * FROM questions ORDER BY questions\
         # .posted_date DESC LIMIT 5'
         query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
@@ -232,14 +230,28 @@ def create_app(config):
         query1 = 'SELECT * FROM questions WHERE user_id=%s'
         query2 = 'SELECT * FROM questions WHERE user_id=%s ORDER BY questions\
         .posted_date DESC LIMIT 5'
+        query3 = "SELECT question_id, answer_id,answer_body AS myanswer FROM answers WHERE\
+        user_id='{}';".format(user_id['user_id'])
+        query4="SELECT questions.question_id, questions.title, COUNT(answers.answer_id) as answer\
+            FROM questions\
+            LEFT JOIN answers ON (answers.question_id = questions.question_id) WHERE questions.user_id = '{}'\
+            GROUP BY questions.question_id\
+            ORDER BY answer DESC LIMIT 5;".format(user_id['user_id'])
         usr = (user_id['user_id'],)
         cur.execute(query1, usr)
         row = cur.fetchall()
         if row:
-            cursor=cur
-            cursor.execute(query2, (usr,))
-            recent = cursor.fetchall()
-            return jsonify({"Questions": row, 'user_recent' : recent }), 200
+            cur.execute(query2, (usr,))
+            recent = cur.fetchall()
+            cur.execute(query3)
+            my_answers=cur.fetchall()
+            cur.execute(query4)
+            most_answered=cur.fetchall()
+            return jsonify(
+                {"Questions": row,
+                 'user_recent' : recent,
+                 'most_answered':most_answered,
+                 'my_answers':my_answers}), 200
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>/answers/<answer_id>/<action>", methods=["PUT"])
