@@ -109,7 +109,6 @@ def create_app(config):
 
     @app.route("/api/v2/question", methods=["POST"])
     @jwt_required
-    # @cross_origin()
     def post_question(user_id):
         try:
             request_data = request.get_json()
@@ -168,8 +167,7 @@ def create_app(config):
         return jsonify({"message": "Question does not exist"}), 400
 
     @app.route("/api/v2/questions", methods=["GET"])
-    @jwt_required
-    def fetch_all_questions(user_id):
+    def fetch_all_questions():
         query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
         u.username FROM questions q, users u WHERE u.user_id=q.user_id ORDER BY q.posted_date DESC"
         cur.execute(query)
@@ -179,10 +177,7 @@ def create_app(config):
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/recent-questions", methods=["GET"])
-    @jwt_required
-    def fetch_recent_questions(user_id):
-        # query1 = 'SELECT * FROM questions ORDER BY questions\
-        # .posted_date DESC LIMIT 5'
+    def fetch_recent_questions():
         query = "SELECT q.content,q.posted_date,q.question_id,q.title,q.user_id,\
         u.username FROM questions q, users u WHERE u.user_id=q.user_id\
         ORDER BY q.posted_date DESC LIMIT 5"

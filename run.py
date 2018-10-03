@@ -2,6 +2,9 @@ import os
 
 from app.app import create_app
 from app.manage import create_tables
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = create_app(config=os.getenv("CONFIG"))
 
