@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS,
 from datetime import datetime
 from app.models.questions import Question
 from app.models.answers import Answer
@@ -188,9 +188,12 @@ def create_app(config):
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>", methods=["GET"])
+    @cross_origin()
     def get_a_question_by_id(question_id):
         query = 'SELECT * FROM questions WHERE question_id=%s;'
-        query1 = 'SELECT * FROM answers WHERE question_id=%s;'
+        #query1 = 'SELECT * FROM answers WHERE question_id=%s;'
+        query1 = "SELECT a.accepted, a.answer_body, a.answer_id, a.posted_date, a.question_id, a.user_id, u.username\
+        FROM users u, answers a WHERE a.user_id=u.user_id  AND a.question_id='{}'ORDER BY a.posted_date DESC".format(int(question_id)) 
         cur.execute(query, (question_id,))
         row = cur.fetchone()
         cur.execute(query1, (question_id,))
@@ -227,14 +230,29 @@ def create_app(config):
         query1 = 'SELECT * FROM questions WHERE user_id=%s'
         query2 = 'SELECT * FROM questions WHERE user_id=%s ORDER BY questions\
         .posted_date DESC LIMIT 5'
+        query3 = "SELECT question_id, answer_id,answer_body AS myanswer FROM answers WHERE\
+        user_id='{}';".format(user_id['user_id'])
+        query4="SELECT questions.question_id, questions.title, COUNT(answers.answer_id) as answer\
+            FROM questions\
+            LEFT JOIN answers ON (answers.question_id = questions.question_id) WHERE questions.user_id = '{}'\
+            GROUP BY questions.question_id\
+            ORDER BY answer DESC LIMIT 5;".format(user_id['user_id'])
         usr = (user_id['user_id'],)
         cur.execute(query1, usr)
         row = cur.fetchall()
         if row:
-            cursor=cur
-            cursor.execute(query2, (usr,))
-            recent = cursor.fetchall()
-            return jsonify({"Questions": row, 'user_recent' : recent }), 200
+            cur.execute(query2, (usr,))
+            recent = cur.fetchall()
+            cur.execute(query3)
+            my_answers=cur.fetchall()
+            cur.execute(query4)
+            most_answered=cur.fetchall()
+            return jsonify(
+                {"Questions": row,
+                 'user_recent' : recent,
+                 'most_answered':most_answered,
+                 'my_answers':my_answers,
+                 'accept':True}), 200
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>/answers/<answer_id>/<action>", methods=["PUT"])
