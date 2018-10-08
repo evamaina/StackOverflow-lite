@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS,
+from flask_cors import CORS
 from datetime import datetime
 from app.models.questions import Question
 from app.models.answers import Answer
@@ -87,7 +87,7 @@ def create_app(config):
                 token = User.token_generator(user_id)
                 print(token)
                 return jsonify({"Message": "User logged \
-                              in successfully", "token": token.decode("UTF-8")}), 200
+                              in successfully", "token": token.decode("UTF-8"), "user_id" : user_id['user_id']}), 200
             return jsonify({"Message":"wrong password, enter correct password"}), 401
         return jsonify({"Message": "Enter correct username"}), 401
 
@@ -188,7 +188,6 @@ def create_app(config):
         return jsonify({"Questions": "No questions found"}), 404
 
     @app.route("/api/v2/question/<question_id>", methods=["GET"])
-    @cross_origin()
     def get_a_question_by_id(question_id):
         query = 'SELECT * FROM questions WHERE question_id=%s;'
         #query1 = 'SELECT * FROM answers WHERE question_id=%s;'
@@ -273,11 +272,23 @@ def create_app(config):
                 return jsonify({
                     "Message": "You are not allowed to perform this action"}), 401
         if str(action).strip() == 'update':
+            request_data = request.get_json()
+
+            answer_body = request_data["answer_body"]
+            validate_answer_msg = validate_answer(request_data)
+            if(validate_answer_msg != True):
+                return validate_answer_msg
+
+
+            # if answer_body == "":
+            #     return { "Message" : "Sorry, answerbody is required to update"}, 400
+
+
             cur.execute(query1, (answer_id,))
             row1 = cur.fetchone()
             if not row1:
                 return jsonify({"message": "no answer"}), 404
-            answer_body = request.json.get("answer_body")
+
             if row1['user_id'] == user_id['user_id']:
                 cur.execute(
                     'UPDATE answers SET answer_body=%s WHERE answer_id=%s', (answer_body, answer_id))
