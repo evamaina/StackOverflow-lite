@@ -265,8 +265,8 @@ def create_app(config):
             row = cur.fetchone()
             if row:
                 if row['user_id'] == user_id['user_id']:
-                    query3 = "UPDATE answers SET accepted = true WHERE question_id=%s;"
-                    cur.execute(query3, (question_id,))
+                    query3 = "UPDATE answers SET accepted = true WHERE answer_id=%s;"
+                    cur.execute(query3, (answer_id,))
                     conn.commit()
                     return jsonify({"Message": "answer accepted"}), 200
                 return jsonify({
@@ -278,10 +278,6 @@ def create_app(config):
             validate_answer_msg = validate_answer(request_data)
             if(validate_answer_msg != True):
                 return validate_answer_msg
-
-
-            # if answer_body == "":
-            #     return { "Message" : "Sorry, answerbody is required to update"}, 400
 
 
             cur.execute(query1, (answer_id,))
